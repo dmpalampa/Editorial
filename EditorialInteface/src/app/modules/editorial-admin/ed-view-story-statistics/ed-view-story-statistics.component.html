@@ -1,0 +1,101 @@
+<div class="main-content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-12">
+
+        <div class="card">
+
+          <div class="card-header card-header-info">
+            <h4 class="card-title">Manage Users</h4>
+            <p class="card-category"></p>
+          </div>
+
+          <div class="card-body">
+
+            <div class="row">
+
+              <!--======month picker===============-->
+              <div class="col-md-6">
+                select month:
+                <p-calendar [(ngModel)]="monthSelected" view="month" dateFormat="mm/yy" [yearNavigator]="true"
+                  [style]="{'height':'20px'}" [inputStyle]="{'height':'25px'}" yearRange="2000:2030"
+                  [readonlyInput]="true" (onSelect)="onNewMonthSelected($event)"></p-calendar>
+
+              </div>
+              <!--======range date picker===============-->
+              <div class="col-md-6">
+                select date range:
+                <p-calendar [(ngModel)]="dateRangeSelected" [readonlyInput]="true" dateFormat="dd-mm-yy"
+                  [monthNavigator]="true" [inputStyle]="{'height':'25px'}" [yearNavigator]="true" yearRange="2000:2030"
+                  selectionMode="range" (onSelect)="onNewDateRangeSelected($event)"></p-calendar>
+
+              </div>
+            </div>
+
+            <p-contextMenu #cm [model]="menuItem" appendTo="body"></p-contextMenu>
+
+            <!--======display statistics details===============-->
+            <p-table #dt #TABLE #table id="dataTable" [columns]="cols" [value]="reporterStoryCount" dataKey="userId" selectionMode="single"
+              [(selection)]="selectedUser" (onRowSelect)="onRowSelect($event)" [paginator]="true" [rows]="20"
+              [globalFilterFields]="['userId','firstName','lastName','username']" (onPage)="paginate($event)"
+              [rowsPerPageOptions]="[5,10,20,50]" [totalRecords]="totalRecords" [contextMenu]="cm"
+              [(contextMenuSelection)]="selectedUser">
+              <ng-template pTemplate="caption">
+
+                <div class="row">
+                  <!--======refresh button============-->
+                  <div class="col-md-4">
+                    <button type="button" pButton label="PDF" (click)="exportPdf()" class="btn btn-sm btn-success"></button>
+                    <!-- <button type="button" pButton label="Excel" (click)="exportExcel()" class="btn btn-sm btn-success"></button> -->
+                  </div>
+
+                  <div class="col-md-4">
+                 
+                  </div>
+
+                  <!--======search box============-->
+                  <div class="col-md-4">
+                    <i class="fa fa-search"></i>
+                    <input type="text" pInputText size="30" placeholder="Global Filter"
+                      (input)="dt.filterGlobal($event.target.value, 'contains')"
+                      style="width:auto; float:right;height:25px;">
+                  </div>
+                </div>
+              </ng-template>
+              <ng-template pTemplate="header" let-columns>
+                <tr>
+                  <th *ngFor="let col of columns">
+                    {{col.header}}
+                  </th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-rowData let-columns="columns">
+                <tr [pSelectableRow]="rowData" [pContextMenuRow]="rowData">
+                  <td>
+                    <div *ngIf="rowData.firstName" class="text-capitalize">
+                      {{rowData.firstName+' '+rowData.lastName}}
+                    </div>
+                  </td>
+                  <td>
+                    {{rowData.submittedStories}}
+                  </td>
+                  <td>
+                    {{rowData.editorialRejected}}
+                  </td>
+                  <td>
+                    {{rowData.subEditorialRejected}}
+                  </td>
+                  <td>
+                    {{rowData.numberOftoriesSubEditorialIgnored}}
+                  </td>
+                  <td>
+                    {{rowData.publishedStories}}
+                  </td>
+                </tr>
+              </ng-template>
+            </p-table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>

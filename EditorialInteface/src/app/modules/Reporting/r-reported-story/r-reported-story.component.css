@@ -1,0 +1,39 @@
+
+  .seen {
+    background-color: rgba(204, 240, 252, 0.062) !important;
+    color: black !important;
+}
+
+.approved {
+    background-color: rgb(125, 247, 240) !important;
+    color: black !important;
+}
+
+.very-old-car {
+    background-color: #2CA8B1 !important;
+    color: #ffffff !important;
+}
+
+.condition-image{
+    width: 20px;
+}
+
+::ng-deep div.ui-datepicker .ui-timepicker{
+    padding:initial;
+    font-size:smaller;
+  }
+
+  
+.storyStatusTrue{
+    color: rgb(18, 221, 120);
+}
+
+
+.storyStatusFalse{
+    color:red;
+}
+
+.storySubEditorialApprovalFalse{
+    background-color: rgb(76, 179, 144) !important;
+    color: #ffffff !important;
+}

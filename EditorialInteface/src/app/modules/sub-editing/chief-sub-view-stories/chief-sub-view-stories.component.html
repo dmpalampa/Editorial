@@ -1,0 +1,359 @@
+<div class="main-content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-12">
+
+        <div class="card">
+          <div class="card-header card-header-info">
+            <h4 class="card-title">Assign Edited stories to sub editors</h4>
+            <p class="card-category"></p>
+          </div>
+
+          <div class="card-body">
+            <div class="row" style="margin-top:20px;">
+              <div class="col-md-4">
+                <!--==================range date picker===============-->
+                Select Date: <p-calendar [(ngModel)]="dateSelected" [style]="{'height':'20px'}"
+                  [inputStyle]="{'height':'20px'}" [inline]="false" dateFormat="dd-mm-yy"
+                  (onSelect)="onNewDateSelected($event)"></p-calendar>
+
+                <!--=======================Left table for stories display====================-->
+                <div *ngIf="stories.length>0">
+                  <p-table #_dt [columns]="_cols" [value]="stories" [(selection)]="selectedStories" [paginator]="true"
+                    [rows]="15" [scrollable]="true" scrollHeight="600px" (onRowSelect)="onRowSelect($event)">
+                    <ng-template pTemplate="caption" let-columns>
+                      <div>
+                        <input type="text" pInputText placeholder="Search story"
+                          (input)="_dt.filterGlobal($event.target.value, 'contains')" style="width:100%; 
+                                height:20px;" />
+                        <span style="margin-left:-20px;">
+                          <i class="fa fa-search" style="width: auto;"></i>
+                        </span>
+                      </div>
+                    </ng-template>
+
+                    <ng-template pTemplate="body" let-rowData let-columns="columns">
+                      <tr [pSelectableRow]="rowData" style="color : black; background: rgb(229, 248, 248);">
+                        <td style="width: 2em">
+                          <p-tableCheckbox [value]="rowData"></p-tableCheckbox>
+                        </td>
+                        <td>
+                          <div>
+                            <div *ngIf="rowData.storyName">
+                              <div *ngIf="rowData.storyName.length>=30" class="text-capitalize" style="font-size: 14px">
+                                <h6> {{rowData.storyName | slice:0:30}}...</h6>
+                              </div>
+                              <div *ngIf="rowData.storyName.length<30" class="text-capitalize" style="font-size: 14px">
+                                <h6>{{rowData.storyName}}</h6>
+                              </div>
+                              <div style="margin-top: 0%; font-size: 12px">Cat: {{rowData.storyCategory}}</div>
+
+                              <!--edited by-->
+                              <div *ngIf="rowData.storyEditor" style="margin-top: 0%; font-size: 12px"><small>
+                                Edited by: {{rowData.storyEditor.firstName}} {{rowData.storyEditor.lastName}}</small></div>
+
+                              <!--date edited-->
+                              <div style="margin-top: 0%; font-size: 12px"><small>
+                                  Edited: {{rowData.dateEdited | date: 'medium'}}</small></div>
+
+                              <!--date submitted-->
+                              <div style="margin-top: 0%; font-size: 12px"><small>
+                                  Submitted: {{rowData.originalStory.dateSubmitted | date: 'medium'}}</small></div>
+
+                            </div>
+                            <div *ngIf="!rowData.storyName" style="color: red;">
+                              Story has no title!!
+                            </div>
+
+                          </div>
+                        </td>
+                      </tr>
+                    </ng-template>
+                  </p-table>
+                </div>
+                <div *ngIf="stories.length==0" style="color: red;font-style: italic; font-size: x-small;">
+                  No More Stories Ready For Sub editing on {{dateSelected | date}}
+                </div>
+              </div>
+
+              <!--============Stories selection part =================-->
+              <div class="col-md-8">
+
+                <div class="row">
+                  <div class="col-md-5">
+                    <!--==========Page dropdown list==============-->
+                    <span class="ui-float-label">
+                      <p-autoComplete id="pageNumber" [suggestions]="filteredPages" [style]="{}" [inputStyle]="{}"
+                        [(ngModel)]="pageNumber" field="pageNumber" (completeMethod)="filterPages($event)"
+                        (onSelect)="onPageNumberSelected($event)" [minLength]="1" [dropdown]="true">
+                      </p-autoComplete>
+                      <label for="pageNumber">Select page</label>
+                    </span>
+                  </div>
+
+                  <div class="col-md-5">
+                    <!--==========Displayer subeditors list on this button click==============-->
+                    <!-- <div *ngIf="pageNumber!=null"> -->
+                    <!-- <div *ngIf="!pageNumber.pageAssignment"> -->
+                    <!-- <button type="text" class="pull-left btn btn-sm btn-primary" (click)="op2.show($event)"
+                          type="text">Select
+                          sub-editor</button> -->
+
+                    <span class="ui-float-label">
+
+                      <p-autoComplete id="selectSubEditor" [suggestions]="filteredSubEditors" [style]="{}"
+                        [inputStyle]="{}" [(ngModel)]="selectedSubEditor" field="username"
+                        (completeMethod)="filterSubEditors($event)" (onSelect)="onSubEditorSelected($event)"
+                        [minLength]="1" [dropdown]="true">
+                      </p-autoComplete>
+                      <label for="selectSubEditor">Select Sub-editor</label>
+                    </span>
+
+                    <!-- </div> -->
+                    <!-- <div *ngIf="pageNumber.pageAssignment">
+                        {{selectedSubEditor.lastName }} {{selectedSubEditor.firstName}}
+                      </div> -->
+                  </div>
+                  <!-- <div *ngIf="pageNumber==null" style="color: red; font-size: x-small; font-style: italic;">
+                      select page pageNumber
+                    </div> -->
+                  <!-- </div> -->
+
+                  <div class="col-md-2">
+                    <div *ngIf="pageNumber!=null">
+                      <div *ngIf="selectedSubEditor!=null">
+                        <div *ngIf="selectedStories.length>0">
+                          <!--==========Save stories assignment button click==============-->
+                          <button type="button" class="btn btn-sm btn-danger "
+                            (click)="onSubmitStoryAssignment()">Save</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-md-12">
+                    <p-table [value]="selectedStories" [(selection)]="selectedStories" [scrollable]="true"
+                      scrollHeight="350px" dataKey="eStoryId">
+                      <ng-template pTemplate="caption" let-columns>
+                        <div>
+                          Stories Sub-editing Assignment
+                        </div>
+
+                      </ng-template>
+                      <ng-template pTemplate="header">
+                        <tr>
+                          <th [attr.colspan]="2">
+                            <div *ngIf="selectedSubEditor!=null">
+                              Sub-Editor: {{selectedSubEditor.lastName }} {{selectedSubEditor.firstName}}
+                            </div>
+                            <div *ngIf="selectedSubEditor==null"
+                              style="color: red;font-style: italic; font-size: x-small; font-weight: normal;">
+                              You haven't selected a sub-editor to assign stories to!!
+                            </div>
+                          </th>
+                        </tr>
+                      </ng-template>
+
+
+                      <ng-template pTemplate="body" let-rowData let-expanded="expanded">
+                        <tr [pSelectableRow]="rowData" style="background-color: azure; color: black;">
+                          <td style="width: 2em;">
+                            <a href="#" [pRowToggler]="rowData">
+                              <i
+                                [ngClass]="expanded ? 'pi pi-chevron-down chevron-color' : 'pi pi-chevron-right chevron-color'"></i>
+                            </a>
+                          </td>
+                          <td>
+                            <h6>{{rowData.storyName}}</h6>
+                          </td>
+                          <td style="width: 10em">
+                            <!--==============Un select story check box==========-->
+                            <p-tableCheckbox [value]="rowData"></p-tableCheckbox>
+                            <!--==============reject story button==========-->
+                            <button class="btn btn-sm btn-danger"
+                              (click)="confirmRejectStoryWithComment(rowData)">Reject
+                            </button>
+                          </td>
+                        </tr>
+                      </ng-template>
+
+                      <!--==============Story content display on row expand==========-->
+                      <ng-template pTemplate="rowexpansion" let-rowData let-columns="columns">
+                        <tr>
+                          <td [attr.colspan]="3">
+                            <p-scrollPanel [style]="{width: '100%', height: '250px'}">
+                              <div style="color: royalblue;">{{storyReporters}}</div>
+                              <div style="background: rgb(245, 247, 243);padding:12px; text-align: justify; font-family: Georgia, 'Times New Roman',
+                                    Times, serif; font-size: 14px;" innerHtml={{rowData.storyContent}}></div>
+                            </p-scrollPanel>
+                            <div style="background: rgb(169, 245, 245);">
+                              <i (click)="selectStory($event,storySelected,_op3)" style="font-size:16px"
+                                class="pi pi-paperclip">{{storyFiles.length}} file(s)
+                              </i>
+                            </div>
+                          </td>
+                        </tr>
+                      </ng-template>
+
+                      <ng-template pTemplate="summary">
+                        <div *ngIf="selectedStories.length<=0"
+                          style="color: red;font-style: italic; font-size: x-small; font-weight: normal;">
+                          You haven't selected any stories for Assignment!!
+                        </div>
+                      </ng-template>
+                      <ng-template pTemplate="footer" let-rowData let-columns="columns">
+
+                      </ng-template>
+                    </p-table>
+                    <!-- <p-accordion *ngFor="let story of selectedStories">
+                        <p-accordionTab header="{{story.storyName}}">
+                          <div  style="padding:1em;border-radius: 15px 50px 30px;text-align: justify; font-family: Georgia, 'Times New Roman',
+                          Times, serif; font-size: 14px;" innerHtml={{story.storyContent}}></div>
+                        </p-accordionTab>
+                      </p-accordion> -->
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <p-confirmDialog [style]="{width: '50vw'}"></p-confirmDialog>
+
+            <!-- <p-overlayPanel #op2 appendTo="body">
+              <p-table #dt [columns]="cols" [value]="subEditorsList" [(selection)]="selectedSubEditor"
+                [scrollable]="true" scrollHeight="400px" [style]="{width: '300px'}"
+                [globalFilterFields]="['userId','firstName','lastName','username']">
+                <ng-template pTemplate="caption" let-columns>
+                  Sub-Editors list
+                  <div>
+                    <input type="text" pInputText placeholder="Search "
+                      (input)="dt.filterGlobal($event.target.value, 'contains')" style="width:100%; height:20px;" />
+                    <span style="margin-left:-20px;">
+                      <i class="fa fa-search" style="width: auto;"></i>
+                    </span>
+                  </div>
+                </ng-template>
+
+                <ng-template pTemplate="body" let-rowData let-columns="columns">
+                  <tr [pSelectableRow]="rowData">
+                    <td>
+                      {{rowData.firstName+' '+rowData.lastName}}
+                    </td>
+                    <td style="width: 2em">
+                      <p-tableRadioButton [value]="rowData"></p-tableRadioButton>
+                    </td>
+                  </tr>
+                </ng-template>
+
+              </p-table>
+            </p-overlayPanel> -->
+
+            <p-overlayPanel #op3 [dismissable]="false" [showCloseIcon]="true" appendTo="body">
+              <p-table [value]="storyFiles" *ngIf="selectedStory" [style]="{width: '350px'}" [paginator]="true"
+                [rows]="5">
+                <ng-template pTemplate="caption">
+                  List of files
+                </ng-template>
+                <ng-template pTemplate="body" let-rowData>
+                  <tr>
+                    <td style="font-size: 11.5px;">
+                      {{rowData.fileName}}
+                    </td>
+                    <td>
+                      <i class="pull-right pi pi-eye" (click)="openFile(rowData.fileContent)">View</i>
+                    </td>
+                    <td>
+                      <i class="pull-right pi pi-trash" (click)="confirmRemoveFile(rowData)">Delete</i>
+                    </td>
+                  </tr>
+                </ng-template>
+                <ng-template pTemplate="summary">
+                </ng-template>
+              </p-table>
+            </p-overlayPanel>
+
+
+
+            <!--========================story comments dialog===============-->
+
+            <p-dialog header="Give a reason why this story must be rejected" [(visible)]="storyCommentDisplay"
+              [responsive]="true" showEffect="fade" [modal]="true"
+              [style]="{width: '750px', minWidth: '200px', minHeight: '200px'}" [minY]="70" [maximizable]="true"
+              [baseZIndex]="10000">
+              <div class="container-fluid">
+                <div class="row">
+                  <div class="col-md-12">
+                    <h5>{{storyTitle}}</h5>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-md-12" *ngIf="comments.length>0">
+                    <p-scrollPanel [style]="{width: '100%', height: '300px'}">
+                      <ul>
+                        <li *ngFor="let comment of comments" class="media">
+                          <div class="container-fluid">
+                            <div class="row" style="margin-top: 5px">
+                              <div class="col-md-6">
+                                <div *ngIf="comment.storyOwer==false">
+                                  <p-card subheader="{{comment.username}}" [style]="{'width': '360px'}">
+                                    <div
+                                      style="margin-top: 5px; margin-top: 5px;font-size: 10; font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;">
+                                      <p>{{comment.comment }}</p>
+                                    </div>
+                                    <div><small>{{comment.date | date:"medium" }}</small></div>
+                                  </p-card>
+                                </div>
+                              </div>
+
+                              <div class="col-md-6">
+                                <div *ngIf="comment.storyOwer==true">
+                                  <p-card subheader="{{comment.username}}"
+                                    [style]="{'width': '360px', 'background-color': 'rgb(214, 212, 212)'}">
+                                    <div
+                                      style="font-size: 10; font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;">
+                                      <p>{{comment.comment }}</p>
+                                    </div>
+                                    <div><small>{{comment.date | date:"medium" }}</small></div>
+                                  </p-card>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </li>
+                      </ul>
+                    </p-scrollPanel>
+                  </div>
+                  <div class="col-md-12" *ngIf="comments.length<=0">
+                    no comments found.
+                  </div>
+                </div>
+              </div>
+              <p-footer>
+                <form [formGroup]="commentForm" (ngSubmit)="onSubmitRejectStoryWithComment()">
+                  <div class="row">
+                    <div class="col-md-8">
+                      <textarea [rows]="3" class="form-control" pInputTextarea formControlName="comment"
+                        autoResize="autoResize"></textarea>
+                      <p-message severity="error" text="Give a reason why this story must be rejected"
+                        *ngIf="!commentForm.get('comment').value && commentForm.get('comment').touched"></p-message>
+                    </div>
+
+                    <div class="col-md-4">
+                      <button mat-raised-button type="submit" [disabled]="!commentForm.valid"
+                        class="btn btn-danger pull-right">Submit</button>
+                      <div class="clearfix"></div>
+                    </div>
+                  </div>
+                </form>
+              </p-footer>
+            </p-dialog>
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

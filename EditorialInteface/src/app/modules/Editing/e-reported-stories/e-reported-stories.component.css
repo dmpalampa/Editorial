@@ -1,0 +1,19 @@
+
+.storyStatusTrue{
+    color: springgreen;
+}
+
+
+.storyStatusFalse{
+    color:red;
+}
+
+.editor-seen{
+    background-color: #a7d9f0 !important;
+
+}
+
+.not-editor-seen{
+    background-color: rgba(53, 87, 99, 0.842);
+    color: white;
+}

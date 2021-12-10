@@ -1,0 +1,31 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+
+    <class name="com.monitor.editorial.entities.Entity_StoryComments" table="story_comments" schema="public"
+           catalog="postgres">
+           <id name="cId" column="c_id">
+             <generator class="identity"></generator>
+        </id>
+        <property name="comment">
+            <column name="comment" sql-type="varchar" />
+        </property>
+        <property name="reportedStoryId">
+            <column name="reported_story_id" sql-type="bigint" />
+        </property>
+        <property name="username">
+            <column name="username" sql-type="varchar"/>
+        </property>
+        <property name="date">
+            <column name="date" sql-type="timestamp"/>
+        </property>
+        <property name="userId">
+            <column name="user_id" sql-type="bigint"/>
+        </property>
+        <property name="storyOwer">
+            <column name="story_ower" sql-type="boolean"/>
+        </property>
+    </class>
+</hibernate-mapping>

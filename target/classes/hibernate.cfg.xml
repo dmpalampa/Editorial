@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-configuration PUBLIC "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+                                         "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+	<session-factory name="hibernateSessionFactory">
+		<property name="hibernate.connection.driver_class">org.postgresql.Driver</property>
+		<property name="hibernate.connection.password">postres</property>
+		<property name="hibernate.connection.username">postgres</property>
+		<property name="hibernate.connection.url">jdbc:postgresql://localhost:5432/postgres</property>
+		<property name="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</property>
+		<property name="hibernate.show_sql">true</property>
+		<property name="hibernate.format_sql">true</property>
+		<!-- <property name="hibernate.hbm2ddl.auto">create</property> -->
+		<mapping
+			resource="com/monitor/editorial/entities/Entity_EditedStories.hbm.xml" />
+		<mapping
+			class="com.monitor.editorial.entities.Entity_EditedStories" />
+		<mapping
+			resource="com/monitor/editorial/entities/Entity_LogginSessions.hbm.xml" />
+		<mapping
+			class="com.monitor.editorial.entities.Entity_LogginSessions" />
+		<mapping
+			resource="com/monitor/editorial/entities/Entity_ReportedStories.hbm.xml" />
+		<mapping
+			class="com.monitor.editorial.entities.Entity_ReportedStories" />
+		<mapping
+			resource="com/monitor/editorial/entities/Entity_Roles.hbm.xml" />
+		<mapping class="com.monitor.editorial.entities.Entity_Roles" />
+		<mapping
+			resource="com/monitor/editorial/entities/Entity_StoryCategory.hbm.xml" />
+		<mapping
+			class="com.monitor.editorial.entities.Entity_StoryCategory" />
+		<mapping
+			resource="com/monitor/editorial/entities/Entity_StoryComments.hbm.xml" />
+		<mapping
+			class="com.monitor.editorial.entities.Entity_StoryComments" />
+		<mapping
+			class="com.monitor.editorial.entities.Entity_UserReportedStories" />
+		<mapping
+			resource="com/monitor/editorial/entities/Entity_UserReportedStories.hbm.xml" />
+		<mapping
+			resource="com/monitor/editorial/entities/Entity_Users.hbm.xml" />
+		<mapping class="com.monitor.editorial.entities.Entity_Users" />
+		<mapping
+			resource="com/monitor/editorial/entities/Entity_Permissions.hbm.xml" />
+		<mapping
+			class="com.monitor.editorial.entities.Entity_Permissions" />
+
+		<mapping
+			resource="com/monitor/editorial/entities/Entity_ReportedStoryFiles.hbm.xml" />
+		<mapping
+			class="com.monitor.editorial.entities.Entity_ReportedStoryFiles" />
+
+		<mapping
+			resource="com/monitor/editorial/entities/Entity_SubEditorPagesAssignments.hbm.xml" />
+		<mapping
+			class="com.monitor.editorial.entities.Entity_SubEditorPagesAssignments" />
+			
+			<mapping
+			resource="com/monitor/editorial/entities/Entity_BookPages.hbm.xml" />
+		<mapping
+			class="com.monitor.editorial.entities.Entity_BookPages" />
+			
+			<mapping
+			resource="com/monitor/editorial/entities/Entity_SubEditorStoryVersion.hbm.xml" />
+		<mapping
+			class="com.monitor.editorial.entities.Entity_SubEditorStoryVersion" />
+			
+			<mapping
+			resource="com/monitor/editorial/entities/Entity_SubEditedPages.hbm.xml" />
+		<mapping
+			class="com.monitor.editorial.entities.Entity_SubEditedPages" />
+			
+			
+			
+	</session-factory>
+</hibernate-configuration>

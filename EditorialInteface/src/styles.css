@@ -1,0 +1,11 @@
+@import '~@angular/material/prebuilt-themes/purple-green.css';
+
+.cdk-global-overlay-wrapper, .cdk-overlay-container {
+    z-index: 99999 !important;
+ }
+
+
+
+  .mat-select-menu-container {
+    z-index: 99999 !important;
+  }

@@ -1,0 +1,49 @@
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+
+	<class
+		name="com.monitor.editorial.entities.Entity_SubEditedPages"
+		table="sub_edited_pages" schema="public" catalog="postgres">
+
+		<id column="sub_edited_page_id" name="subEditedPageId">
+			<generator class="identity"></generator>
+		</id>
+		<property name="bookPageId">
+			<column name="book_page_id" />
+		</property>
+		<property name="subEdtitorId">
+			<column name="sub_edtitor_id" />
+		</property>
+
+		<property name="cheifSubApprovalStatus">
+			<column name="cheif_sub_approval_status" />
+		</property>
+		<property name="approvalDate">
+			<column name="approval_date" />
+		</property>
+		<property name="subEditedDate">
+			<column name="sub_edited_date" />
+		</property>
+
+		<property name="fileName">
+			<column name="file_name" />
+		</property>
+		<property name="fileContent">
+			<column name="file_content" />
+		</property>
+		<property name="prePressReceived">
+			<column name="pre_press_received" />
+		</property>
+
+		<property name="subEditedPagesRef">
+			<column name="sub_edited_pages_ref" />
+		</property>
+
+		<property name="cheifSubId">
+			<column name="cheif_sub_id" />
+		</property>
+
+	</class>
+</hibernate-mapping>

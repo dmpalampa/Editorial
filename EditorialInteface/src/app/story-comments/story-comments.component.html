@@ -1,0 +1,66 @@
+<div class="main-content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-12">
+
+        <div class="card">
+
+          <div class="card-header card-header-danger">
+            <h4 class="card-title">Story Categories</h4>
+            <p class="card-category"></p>
+          </div>
+
+          <div class="card-body">
+              <div class="row">
+                  <div class="col-md-12">
+                    <h3>{{ story.storyTitle }}</h3>
+                  </div>
+              </div>
+            <div class="row">
+              <div class="col-md-12">
+                <ul>
+                  <li *ngFor="let comment of comments" class="media">
+                    <div class="pull-left" *ngIf="comment.storyOwer==false"
+                      style="margin-top: 5px; background-color: beige;">
+                      <h5 class="mt-0 mb-1">{{ comment.username }}</h5>
+                      <hr>
+                      <p >  {{ comment.comment }}</p>
+                    </div>
+                   
+                    <div class="pull-right" *ngIf="comment.storyOwer==true"
+                      style="margin-top: 5px; background-color:aquamarine;">
+                      <h5 class="mt-0 mb-1">{{ comment.username }}</h5>
+                      <hr>
+                     <p> {{ comment.comment }}</p>
+                    </div>
+                  </li>
+                </ul>
+
+                <form [formGroup]="commentForm" (ngSubmit)="onSubmit()">
+                  <div class="row">
+                    <div class="col-md-12">
+                      <textarea [rows]="5" [cols]="30" pInputTextarea formControlName="comment"
+                        autoResize="autoResize"></textarea>
+                      <br />
+                      <p-message severity="error" text="Lastname is required"
+                        *ngIf="!commentForm.get('comment').value && commentForm.get('comment').touched">
+                      </p-message>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-12">
+                      <button mat-raised-button type="submit" class="btn btn-danger pull-right">Submit</button>
+                      <div class="clearfix"></div>
+
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>

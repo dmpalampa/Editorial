@@ -1,0 +1,34 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+
+	<class name="com.monitor.editorial.entities.Entity_ReportedStoryFiles"
+		table="reported_story_files" schema="public" catalog="postgres">
+
+		<id column="file_id" name="fileId">
+			<generator class="identity"></generator>
+		</id>
+		<property name="fileName">
+			<column name="file_name"/>
+		</property>
+		<property name="fileContent">
+			<column name="file_content"/>
+		</property>
+		<property name="storyId">
+			<column name="story_id" />
+		</property>
+		<property name="fileType">
+			<column name="file_type" />
+		</property>
+		<property name="createdOn">
+			<column name="created_on"/>
+		</property>
+		<property name="createdBy">
+			<column name="created_by"/>
+		</property>
+	
+
+	</class>
+</hibernate-mapping>

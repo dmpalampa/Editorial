@@ -1,0 +1,53 @@
+<div class="logo bg-dark">
+  <a href="https://www.monitor.co.ug/" class="simple-text">
+    <div class="logo-img">
+      <img src="/assets/img/nmg-log.jpg"/>
+    </div>
+    <label>E-Editorial</label>
+  </a>
+</div>
+<div class="sidebar-wrapper" style="background-color: rgb(189, 194, 196);">
+  <ul class="nav">
+    <li routerLinkActive="active" *ngFor="let menuItem of menuItems" class="{{menuItem.class}} nav-item">
+      <div class="nav-item" *ngIf="!menuItem.children">
+        <a class="nav-link" [routerLink]="[menuItem.path]">
+         
+          <i class="fa fa-{{menuItem.icon}}"></i>
+          <p>{{menuItem.title}}</p>
+        </a>
+      </div>
+      <div class="nav-item nav-item" *ngIf="menuItem.children">
+        <mat-accordion>
+          <mat-expansion-panel (opened)="panelOpenState = true"
+                               (closed)="panelOpenState = false">
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+                <i class="fa fa-{{menuItem.icon}}"></i>
+                <p>{{menuItem.title}}</p>
+              </mat-panel-title>
+
+            </mat-expansion-panel-header>
+            <span *ngFor="let child of menuItem.children">
+                            <a class="nav-link" [routerLink]="[child.path]">
+                                <i class="fa fa-{{child.icon}}"></i>
+                                <p>{{child.title}}</p>
+                            </a>
+                    </span>
+
+          </mat-expansion-panel>
+        </mat-accordion>
+
+        <!-- <a class="nav-link" [routerLink]="[menuItem.path]">
+                <i class="fa fa-{{menuItem.icon}}"></i>
+                <p>{{menuItem.title}}</p>
+        </a>  -->
+      </div>
+    </li>
+    <li routerLinkActive="active" (click)="logout()" class="nav-item">
+      <a class="nav-link">
+        <i class="fa fa-sign-out"></i>
+        <p>Sign out</p>
+      </a>
+    </li>
+  </ul>
+</div>

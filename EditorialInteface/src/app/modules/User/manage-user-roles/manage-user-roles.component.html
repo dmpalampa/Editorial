@@ -1,0 +1,147 @@
+<div class="main-content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-12">
+
+        <div class="card">
+
+          <div class="card-header card-header-info">
+            <h4 class="card-title">Manage User Roles</h4>
+            <p class="card-category"></p>
+          </div>
+
+          <div class="card-body">
+            <div>
+              <div class="row">
+                <div class="col-md-6">
+                  <button class="btn btn-sm btn-outline-primary" label="Refresh" *ngIf="refreshPage_" pButton
+                    type="button" (click)="refreshPage()" icon="pi pi-refresh" iconPos="right"></button>
+
+                </div>
+                <div class="col-md-6">
+                  <button class="btn btn-sm btn-outline-primary pull-right" pButton type="button"
+                    (click)="openRolesModal()" label="Add Role" icon="pi pi-plus" iconPos="left"></button>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-md-12">
+                  <ul>
+                    <li *ngFor="let role of rolesList" list-group-item-primary>
+                        {{role.roleName}}
+                      <table>
+                        <tr>
+                          <td><button pButton type="button" (click)="setRoleForEdit(role)"
+                              class="btn btn-sm btn-outline-primary" icon="pi pi-pencil" iconPos="left"></button></td> 
+                          <td></td>
+                        </tr>
+                         <tr>
+                          <td></td>
+                          <td>
+                            <ul>
+                              <li *ngFor="let perm of role.permissionsList" list-group-item-secondary>
+                                {{perm.permissionName}}
+                              </li>
+                            </ul>
+                          </td>
+                        </tr> 
+                      </table>
+                    
+                    </li>
+                  </ul>
+                </div>
+              </div>
+
+              <p-dialog [(visible)]="displayRoleModal" header="Add User Role" [modal]="true" [responsive]="true"
+                [style]="{minWidth: '200px'}" [maximizable]="true" [baseZIndex]="10000">
+                <form [formGroup]="rolesForm" (ngSubmit)="onSubmit()">
+
+                  <div class="row" style="margin-top:30px;">
+                    <div class="col-md-6">
+                      <span class="ui-float-label">
+                        <input id="float-input" class="form-control" formControlName="roleName" type="text" size="30"
+                          pInputText>
+                        <label for="float-input">Role Name</label>
+                      </span>
+                      <p-message severity="error" text="Role Name is required"
+                        *ngIf="!rolesForm.get('roleName').value && rolesForm.get('roleName').touched"></p-message>
+                    </div>
+
+                    <div class="col-md-6">
+                      <span class="ui-float-label">
+                        <input id="float-input" class="form-control" formControlName="description" type="text" size="30"
+                          pInputText>
+                        <label for="float-input">Role Description</label>
+                      </span>
+                      <p-message severity="error" text="description is required"
+                        *ngIf="!rolesForm.get('description').value && rolesForm.get('description').touched">
+                      </p-message>
+                    </div>
+                  </div>
+                  <hr />
+
+                  <div class="row">
+                    <div class="col-md-2"></div>
+                    <div class="col-md-8">
+                      <table>
+                        <tr>
+                          <th>Permisssions</th>
+                        </tr>
+                        <tbody *ngFor="let perm of rolePermissions; let i= index">
+                          <tr>
+                            <td>
+                              <div style="margin-bottom:30px;">
+                                <input value="{{perm.permissionName}}" formControlName="permissionName2"
+                                  class="form-control" type="text" size="30" pInputText>
+                              </div>
+                            </td>
+
+                            <td>
+                              <i class="pi pi-trash" (click)="UpdateRolePermission(i, perm)"></i>
+                            </td>
+                            <td>
+                              <i class="pi pi-pencil" (click)="deletePermission(i,perm)"></i>
+                            </td>
+                          </tr>
+                        </tbody>
+                        <tfoot>
+                          <tr>
+                            <td>
+                              <span class="ui-float-label">
+                                <input id="float-input" formControlName="permissionName" class="form-control"
+                                  type="text" size="30" pInputText>
+                                <label for="float-input">"Add role permission"</label>
+                              </span>
+                            </td>
+                            <td></td>
+                            <td>
+                              <i class="pi pi-plus" (click)="AddRolePermissions()"></i>
+                            </td>
+                            <td></td>
+                          </tr>
+                        </tfoot>
+                      </table>
+
+                    </div>
+                    <div class="col-md-2"></div>
+                  </div>
+                </form>
+                <p-footer>
+                  <div class="ui-dialog-buttonpane ui-helper-clearfix">
+                    <button mat-raised-button (click)="onSubmit()" type="submit" [disabled]="!rolesForm.valid"
+                      class="btn btn-danger pull-right">Submit</button>
+                    <div class="clearfix"></div>
+                  </div>
+                </p-footer>
+              </p-dialog>
+
+
+
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

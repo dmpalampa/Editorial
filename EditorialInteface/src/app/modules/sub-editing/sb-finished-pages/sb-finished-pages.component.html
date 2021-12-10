@@ -1,0 +1,67 @@
+<div class="main-content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-12">
+
+        <div class="card">
+          <div class="card-header card-header-info">
+            <h4 class="card-title">Assined Stories</h4>
+            <p class="card-category"></p>
+          </div>
+
+          <div class="card-body">
+            <div class="row">
+              <div class="col-md-4">
+                <!--===============date picker==========-->
+                Select Date: <p-calendar id="date" [(ngModel)]="dateSelected" [inputStyle]="{'height':'20px'}"
+                  [inline]="false" dateFormat="dd-mm-yy" (onSelect)="onNewDateSelected($event)" [yearNavigator]="true"
+                  yearRange="2000:2030"></p-calendar>
+
+                <div>
+                  <!--===============list of stories table==========-->
+                  <p-table [columns]="cols" [value]="subEditedPagesList" dataKey="bookPageId" selectionMode="single"
+                    [(selection)]="selectedPage" [paginator]="true" [rows]="6" [scrollable]="true" 
+                    (onRowSelect)="onRowSelect($event)">
+
+                    <ng-template pTemplate="caption">
+                      <button mat-raised-button (click)="openAddFilesDialog()" class="btn btn-primary">ADD PAGE</button>
+                    </ng-template>
+
+                    <ng-template pTemplate="body" let-rowData>
+                      <tr [pSelectableRow]="rowData">
+                        <td>
+                         <div>{{rowData.fileName}}</div> 
+                        </td>
+                      </tr>
+                    </ng-template>
+                  </p-table>
+                </div>
+                <div *ngIf="subEditedPagesList.length==0" style="font-style:italic;color:red;">
+                  <p>No pages found {{dateSelected | date}}</p>
+                </div>
+              </div>
+
+              <div class="col-md-8">
+
+                <div *ngIf="selectedPage">
+                  <h5>{{selectedPage.fileName}}</h5>
+                  
+                </div>
+              </div>
+            </div>
+
+            <!--============="Upload Files pop up==============-->
+            <p-dialog header="Upload Page" [(visible)]="addFilesdisplay" [style]="{width: '500px', height: '500px'}">
+
+              <p-dropdown [options]="pagesAssigned" [(ngModel)]="selectedPage"></p-dropdown>
+              <br>
+              <p-fileUpload name="storyFiles[]" #form fileLimit="1" customUpload="true"
+                (uploadHandler)="onUpload($event, form)" [showCancelButton]="false" maxFileSize="2000000">
+              </p-fileUpload>
+            </p-dialog>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>

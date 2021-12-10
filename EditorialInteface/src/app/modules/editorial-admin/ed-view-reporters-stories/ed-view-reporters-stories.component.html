@@ -1,0 +1,198 @@
+<div class="main-content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-header card-header-info">
+            <h4 class="card-title">Reported Stories</h4>
+            <p class="card-category"></p>
+          </div>
+          <div class="card-body">
+
+            <div class="row">
+              <div class="col-md-4">
+
+                <div class="row">
+                  <!--==============range date picker ==============-->
+                  <div class="col-md-6">
+                    <span class="ui-float-label">
+                      <p-calendar [(ngModel)]="_dateSelected" [inputStyle]="{'height':'20px'}" [inline]="false"
+                        (onSelect)="onNewDateSelected($event)" [monthNavigator]="true" [yearNavigator]="true"
+                        yearRange="2000:2030" selectionMode="range" [readonlyInput]="true">
+                      </p-calendar>
+                      <label for="float-input">select date</label>
+                    </span>
+                  </div>
+
+                  <!--========Story status split button==========-->
+                  <div class="col-md-6">
+                    <p-splitButton label="By status" (onClick)="save('info')" class="pull-right"
+                      [inputStyle]="{'height':'20px'}" [model]="menuItem" styleClass="ui-button-default">
+                    </p-splitButton>
+                  </div>
+                </div>
+
+                <p-contextMenu #cm [model]="menuItem" appendTo="body"></p-contextMenu>
+
+                <!--==============left table display stories ==============-->
+                <div *ngIf="stories.length>0">
+                  <p-table [value]="stories" dataKey="userId" [paginator]="true" [rows]="4" [scrollable]="true"
+                    scrollHeight="370px">
+                    <ng-template pTemplate="caption">
+                      <!--========Search text box==========-->
+                      <div>
+                        <input type="text" pInputText placeholder="Search story"
+                          (input)="dt.filterGlobal($event.target.value, 'contains')" style="width:100%; float:right;
+                        height:25px;" />
+                        <span style="margin-left:-20px;">
+                        </span>
+                      </div>
+                    </ng-template>
+
+                    <ng-template pTemplate="body" let-expanded="expanded" let-rowData let-columns="columns">
+                      <tr [pSelectableRow]="rowData">
+                        <!--===col 1==chevron-down expand row for stories=====-->
+                        <td style="width: 3em">
+                          <a href="#" [pRowToggler]="rowData">
+                            <i [ngClass]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></i>
+                          </a>
+                        </td>
+                        <!--=col 2==name of the reporter-->
+                        <td>
+                          {{rowData.firstName}}
+                        </td>
+                      </tr>
+                    </ng-template>
+                    <!--===row======Stories expanded portion========-->
+                    <ng-template pTemplate="rowexpansion" let-rowData let-columns="columns">
+                      <tr>
+                        <td [attr.colspan]="2">
+                          <!--===nested table====-->
+                          <p-table [columns]="cols" [value]="rowData.submittedStoriesList" dataKey="storyId"
+                            (onRowSelect)="onRowSelect($event)" selectionMode="single" [(selection)]="storySelected">
+
+                            <ng-template pTemplate="caption">
+                              Stories list
+                            </ng-template>
+                            <!--body-->
+                            <ng-template pTemplate="body" let-Data let-columns="_columns">
+                      <tr [pSelectableRow]="Data">
+                        <td style="font-size:12px; font-family: Georgia, 'Times New Roman',Times, serif">
+                          <div class="text-uppercase">
+                            {{Data.storyTitle | slice:0:38}}...<small
+                              style="font-style: italic; color: royalblue;">--click to read more--</small>
+                          </div>
+
+                          <div style="margin-top: 0%; font-size: 12px">Cat: {{Data.storyCategory}}<small
+                              class="pull-right">
+                              {{Data.dateSubmitted | date}}</small></div>
+                          <div>
+                            <table>
+                              <tr style="font-size:  13px">
+                                <!--==============story seen by editor status==============-->
+                                <td> <i
+                                    [ngClass]="Data.editorSeen==true?'pi pi-check storyStatusTrue': 'pi pi-times storyStatusFalse'">seen</i>
+                                </td>
+                                <!--==============story approved by editor status==============-->
+                                <td>
+                                  <i
+                                    [ngClass]="Data.editorialApproval==true?'pi pi-check storyStatusTrue': 'pi pi-times storyStatusFalse'">edited</i>
+                                </td>
+                                <!--==============story approved by sub-editorial status==============-->
+                                <td>
+                                  <i
+                                    [ngClass]="Data.storySubEditorialApproval==1?'pi pi-check storyStatusTrue': 'pi pi-times storyStatusFalse'">published</i>
+                                </td>
+                              </tr>
+                            </table>
+                          </div>
+                        </td>
+                      </tr>
+                    </ng-template>
+                  </p-table>
+                  </td>
+                  </tr>
+
+                  </ng-template>
+                  <ng-template pTemplate="body" let-rowData let-columns="columns" *ngIf="stories.length<0">
+                    <tr>
+                      <td>
+                        <p style="font-family: 'Times New Roman', Times, serif;font-size: 10;color:red;">It's like you
+                          didn't submit any Stories on {{noStoriesDate}}</p>
+                      </td>
+                    </tr>
+                  </ng-template>
+                  </p-table>
+                </div>
+                <div *ngIf="stories.length==0" style="color: red; font-size: 12px;font-style: italic;">
+                  You didn't submit any stories on {{dateSelected | date}}
+                </div>
+              </div>
+
+              <!--==============display story details==============-->
+              <div class="col-md-8" id="story" *ngIf="storySelected">
+                <div class="card">
+                  <div class="card-header card-header-danger">
+                    <h5 class="card-title">{{storyTitle}}</h5>
+                    <p class="card-category"></p>
+                  </div>
+                  <div class="card-body">
+                    <div class="row">
+                      <div class="col-md-12">
+                        <div>{{storyReporters}}</div>
+                        <p-scrollPanel [style]="{width: '100%', height: '300px'}">
+                          <div style="background: rgb(245, 247, 243); text-align: justify;font-size: 14px;font-family: Georgia, 'Times New Roman',
+                              Times, serif;">
+                            {{content}}
+                          </div>
+                        </p-scrollPanel>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="card-footer">
+                    <div class="col-md-6">
+                    comments
+                    </div>
+                    <div class="col-md-6">
+                      {{StoryNumberofWords}} words
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <p-confirmDialog [style]="{width: '50vw'}"></p-confirmDialog>
+
+          <p-overlayPanel #op3 [dismissable]="false" [showCloseIcon]="true" appendTo="body">
+            <p-table [value]="selectedStory.storyFiles" *ngIf="selectedStory" [style]="{width: '300px'}"
+              [paginator]="true" [rows]="5">
+              <ng-template pTemplate="caption">
+                List of files
+              </ng-template>
+              <ng-template pTemplate="header">
+                <tr>
+                  <th>
+                    Name
+                  </th>
+                  <th style="width: 3em;">
+                    View
+                  </th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-rowData>
+                <tr>
+                  <td style="font-size: 10px;">
+                    <p>{{rowData.fileName}}</p>
+                  </td>
+                  <td style="width: 3em;">
+                    <i class="pull-right pi pi-eye" (click)="openFile(rowData.fileContent)"></i>
+                  </td>
+                </tr>
+              </ng-template>
+            </p-table>
+          </p-overlayPanel>
+        </div>
+      </div>
+    </div>
+  </div>

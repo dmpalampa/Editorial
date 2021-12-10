@@ -1,0 +1,27 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+
+	<class
+		name="com.monitor.editorial.entities.Entity_UserReportedStories"
+		table="user_reported_stories" schema="public" catalog="postgres">
+		<id column="id" name="id">
+			<generator class="identity"></generator>
+		</id>
+		<property name="storyId">
+			<column name="story_id" sql-type="bigint" />
+		</property>
+		<property name="userId">
+			<column name="user_id" sql-type="bigint" />
+		</property>
+		<property name="addedBy">
+			<column name="added_by" sql-type="bigint" />
+		</property>
+		<property name="dateSubmitted">
+			<column name="date_submitted" />
+		</property>
+
+	</class>
+</hibernate-mapping>

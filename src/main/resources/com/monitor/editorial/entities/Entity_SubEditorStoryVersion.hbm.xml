@@ -1,0 +1,37 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+
+	<class name="com.monitor.editorial.entities.Entity_SubEditorStoryVersion"
+		table="sub_edit_story_version" schema="public" catalog="postgres">
+
+		<id column="id" name="id">
+			<generator class="identity"></generator>
+		</id>
+		<property name="storyTitle">
+			<column name="story_title" />
+		</property>
+		
+		<property name="storyContent">
+			<column name="story_content" />
+		</property>
+
+		<property name="originalStoryId">
+			<column name="original_story_id" />
+		</property>
+
+		<property name="subEditorUserId">
+			<column name="sub_editor_user_id" />
+		</property>
+
+		<property name="editedStoryId">
+			<column name="edited_story_id" />
+		</property>
+
+		<property name="dateEdited">
+			<column name="date_edited" />
+		</property>
+	</class>
+</hibernate-mapping>

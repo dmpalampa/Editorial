@@ -1,0 +1,64 @@
+<div class="main-content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-12">
+
+        <div class="card">
+
+          <div class="card-header card-header-danger">
+            <h4 class="card-title">Editing Story</h4>
+            <p class="card-category"></p>
+          </div>
+
+          <div class="card-body">
+            <div class="row">
+              <div class="col-md-5 pull-right">
+
+                <div class="row">
+                  <div class="col-md-12">
+                    <h4>ORIGINAL STORY VERSION </h4>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-md-12">
+                    <div style="border-radius: 15px 50px 30px;
+                background: rgb(245, 247, 243);   padding: 20px;  overflow-y: scroll; height: 450px;"
+                      innerHtml={{storyContent}}>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-7">
+                <h4>EDIT STORY</h4>
+                <form [formGroup]="storyEditForm" (ngSubmit)="onSubmitEditedStory()">
+
+                  <div class="container-fluid" style="background-color: aquamarine">
+
+                    <div class="row">
+                      <div class="col-md-12">
+                        <input class="form-control" type="hidden" formControlName="userId" />
+                        <ejs-richtexteditor #toolsRTE id='alltoolRTE' formControlName="editedStory"
+                          [(value)]="storyContent" [toolbarSettings]='tools'>
+                        </ejs-richtexteditor>
+                      </div>
+                    </div>
+
+                    <div class="row">
+                      <div class="col-md-12">
+                        <button mat-raised-button (click)="onSubmitEditedStory()" type="submit"
+                          [disabled]="!storyEditForm.valid" class="btn btn-danger pull-right">Submit</button>
+                      </div>
+                    </div>
+
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

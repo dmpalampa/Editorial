@@ -1,0 +1,269 @@
+<div class="main-content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-12">
+
+        <div class="card">
+
+          <div class="card-header card-header-info">
+            <h4 class="card-title">Manage Users</h4>
+            <p class="card-category"></p>
+          </div>
+
+          <div class="card-body">
+
+            
+              <div class="row">
+                  <div class="col-md-6">
+                    <input class="form-control" type="file" #fileInput />
+                  </div>
+                  <div class="col-md-6">
+                    <button class="btn btn-primary" (click)="uploadFile();">Upload</button>
+                  </div>
+                </div>
+    
+                <!-- <div class="row">
+                    <div class="col-md-12">
+                      <div class="bg-success">
+                        <p>Open Excel File</p>
+                        <input type="file" multiple accept=".xlsx" (change)="postFile($event)" #fileInput />
+                      </div>
+                    </div>
+                  </div> -->
+    
+                <p-contextMenu #cm [model]="menuItem" appendTo="body"></p-contextMenu>
+    
+                <!--=========display users table================-->
+                <p-table #dt [columns]="cols" [value]="userList" dataKey="userId" selectionMode="single" 
+                  [(selection)]="selectedUser" (onRowSelect)="onRowSelect($event)" [paginator]="true" [rows]="20"
+                  [globalFilterFields]="['userId','firstName','lastName','username']" (onPage)="paginate($event)"
+                  [rowsPerPageOptions]="[5,10,20,50]" [totalRecords]="totalRecords" [contextMenu]="cm"
+                  [(contextMenuSelection)]="selectedUser">
+                  <ng-template pTemplate="caption">
+    
+                    <div class="row">
+                      <div class="col-md-4">
+                        <button pButton type="button" icon="pi pi-plus" class="btn btn-sm btn-outline-primary pull-left"
+                          label="Creat User" (click)="showDialogToAdd()"></button>
+                      </div>
+                      <div class="col-md-4">
+                        <button pButton type="button" class="btn btn-sm btn-outline-primary pull-left" label="Refresh"
+                          icon="pi pi-refresh" (click)="refreshPage()"></button>
+                      </div>
+    
+                      <div class="col-md-4">
+                        <i class="fa fa-search"></i>
+                        <input type="text" pInputText size="30" placeholder="Global Filter"
+                          (input)="dt.filterGlobal($event.target.value, 'contains')" style="width:auto">
+                      </div>
+                    </div>
+                  </ng-template>
+                  <ng-template pTemplate="header" let-columns>
+                    <tr>
+                      <th *ngFor="let col of columns">
+                        {{col.header}}
+                      </th>
+                      <!-- <th>
+                          Actions
+                        </th> -->
+                    </tr>
+                  </ng-template>
+                  <ng-template pTemplate="body" let-rowData let-columns="columns">
+                    <tr [pSelectableRow]="rowData" [pContextMenuRow]="rowData"
+                      [ngClass]="rowData.status==false ?'blocked':null">
+                      <td>
+                        <div *ngIf="rowData.firstName" class="text-capitalize">
+                          {{rowData.firstName+' '+rowData.lastName}}
+                        </div>
+                      </td>
+                      <td>
+                        <div *ngIf="rowData.username">
+                          {{rowData.username.split('@')[0]}}
+                        </div>
+                      </td>
+                      <td>
+                        <div *ngIf="rowData.role">
+                          {{rowData.role}}
+                        </div>
+                      </td>
+                    </tr>
+                  </ng-template>
+                </p-table>
+
+            <!--=====================Add/update users dialog================-->
+            <p-dialog [(visible)]="displayDialog" [responsive]="true" showEffect="fade" [modal]="true"
+              [style]="{width: '750px', minWidth: '200px'}" [minY]="70" [maximizable]="true" [baseZIndex]="10000">
+              <p-header>
+                {{userModalHeader}}
+              </p-header>
+
+              <p-toast [style]="{marginTop: '80px'}"></p-toast>
+              <!--=====================Add/update users form================-->
+              <form [formGroup]="userForm" (ngSubmit)="onSubmit()">
+                <div class="container-fluid">
+                  <div class="row" style="margin-top:30px;">
+
+                    <!--========user userName textbox================-->
+                    <div class="col-md-12">
+                      <span class="ui-float-label">
+                        <input id="user-name" class="form-control" type="text" pInputText formControlName="userName"
+                          size="30">
+                        <label for="user-name">Email Address</label>
+                      </span>
+                      <p-message severity="error" text="userName is required"
+                        *ngIf="!userForm.get('userName').value && userForm.get('userName').touched"></p-message>
+                    </div>
+                  </div>
+
+                  <!--========user lastName textbox================-->
+                  <div class="row" style="margin-top:30px;">
+                    <div class="col-md-12">
+                      <span class="ui-float-label">
+                        <input id="last-name" class="form-control" pInputText formControlName="lastName">
+                        <label for="last-name"> Last Name </label>
+                      </span>
+                      <p-message severity="error" text="Lastname is required"
+                        *ngIf="!userForm.get('lastName').value && userForm.get('lastName').touched"></p-message>
+                    </div>
+                  </div>
+
+                  <!--========user firstName textbox================-->
+                  <div class="row" style="margin-top:30px;">
+                    <div class="col-md-12">
+                      <span class="ui-float-label">
+                        <input id="firstName" class="form-control" pInputText type="text" formControlName="firstName">
+                        <label for="firstName"> First Name </label>
+                      </span>
+                      <p-message severity="error" text="Firstname is required"
+                        *ngIf="!userForm.get('firstName').value && userForm.get('firstName').touched"></p-message>
+                    </div>
+                  </div>
+
+                  <!--=========users role auto-complete-input================-->
+                  <div class="row" style="margin-top:30px;">
+                    <div class="col-md-12">
+                      <span class="ui-float-label">
+                        <p-autoComplete id="role" [suggestions]="filteredRoles" formControlName="userRole"
+                          (completeMethod)="filterRoles($event)" field="roleName" [size]="30" [minLength]="1"
+                          [dropdown]="true" (onSelect)="onRoleSelected($event)">
+                        </p-autoComplete>
+                        <label for="role"> Select Role </label>
+                      </span>
+                      <p-message severity="error" text="role is required"
+                        *ngIf="!userForm.get('userRole').value && userForm.get('userRole').touched"></p-message>
+                    </div>
+                  </div>
+
+                  <!--=========story category auto-complete-input================-->
+                  <div class="row" style="margin-top:30px;">
+                    <div class="col-md-12">
+                      <span class="ui-float-label">
+                        <p-autoComplete id="role" [suggestions]="filteredCategories" formControlName="storyCategory"
+                          field="categoryName" (completeMethod)="filterCategories($event)" [size]="30" [minLength]="1"
+                          [dropdown]="true" [disable]="!isEditor">
+                        </p-autoComplete>
+                        <label for="role"> Select Story Category </label>
+                      </span>
+                    </div>
+                  </div>
+
+                  <!--=========submit button================-->
+                  <div class="row" style="margin-top:30px;">
+                    <div class="col-md-6">
+                      <button type="button" pButton icon="fa fa-close" (click)="delete()" label="Delete"></button>
+                    </div>
+                    <div class="col-md-6">
+                      <button mat-raised-button (click)="onSubmit()" type="submit" [disabled]="!userForm.valid"
+                        class="btn btn-danger pull-right">{{submitButonText}}</button>
+                    </div>
+                  </div>
+                </div>
+              </form>
+              <p-footer>
+              </p-footer>
+            </p-dialog>
+
+            <!--=========Reset user password dialog================-->
+            <p-dialog header="Reset user password" [(visible)]="displayChangeUserPass" [responsive]="true"
+              showEffect="fade" [modal]="true" [style]="{width: '950px', minWidth: '200px'}" [minY]="70"
+              [maximizable]="true" [baseZIndex]="10000">
+              <form [formGroup]="changePassWordForm" (ngSubmit)="confirmChangePassword()">
+                <div class="container-fluid">
+                  <div class="row">
+                    <div class="col-md-2">
+                      password *:
+                    </div>
+                    <div class="col-md-6">
+                      <input class="form-control" type="hidden" formControlName="userId" />
+                      <input class="form-control" type="password" pPassword formControlName="password"
+                        placeholder="Required" />
+                    </div>
+                    <div class="col-md-4">
+                      <p-message severity="error" text="Lastname is required"
+                        *ngIf="!changePassWordForm.get('password').value && changePassWordForm.get('password').touched">
+                      </p-message>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-2">
+                      Confirm Password *:
+                    </div>
+                    <div class="col-md-6">
+                      <input class="form-control" type="password" pPassword pInputText formControlName="confirmPassword"
+                        placeholder="Required" />
+                    </div>
+                    <div class="col-md-4">
+                      <p-message severity="error" text="Lastname is required"
+                        *ngIf="!changePassWordForm.get('confirmPassword').value && changePassWordForm.get('confirmPassword').touched">
+                      </p-message>
+                    </div>
+                  </div>
+                </div>
+                <p-footer>
+                  <div class="ui-dialog-buttonpane ui-helper-clearfix">
+                    <button type="button" pButton icon="fa fa-close" (click)="delete()" label="cancel"></button>
+                    <button mat-raised-button type="submit" [disabled]="!changePassWordForm.valid"
+                      class="btn btn-danger pull-right">Submit</button>
+                    <div class="clearfix"></div>
+                  </div>
+                </p-footer>
+              </form>
+            </p-dialog>
+
+            <p-confirmDialog [style]="{width: '50vw'}"></p-confirmDialog>
+
+            <!--=========Lock/Unlock user account dialog================-->
+            <p-dialog header="Block/Unblock user" [(visible)]="userAccountantStatusDisplay" [responsive]="true"
+              showEffect="fade" [modal]="true" [style]="{width: '750px', minWidth: '200px'}" [minY]="70"
+              [maximizable]="true" [baseZIndex]="10000">
+              <div class="container-fluid">
+                <div class="row">
+                  <div class="col-md-12">
+                    {{userFullname}}
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-3">
+                  </div>
+                  <div class="col-md-6">
+                    <p-toggleButton [(ngModel)]="userAccountStatus" onLabel="Lock Account" offLabel="UnLock Account"
+                      onIcon="pi pi-check" offIcon="pi pi-times" [style]="{'width':'150px'}"
+                      (click)="confirmChangeUserAccountStatus()"></p-toggleButton>
+                  </div>
+                  <div class="col-md-3">
+                  </div>
+                </div>
+              </div>
+              <p-footer>
+                <div class="ui-dialog-buttonpane ui-helper-clearfix">
+                  <button mat-raised-button type="submit" class="btn btn-danger pull-right">Cancel</button>
+                  <div class="clearfix"></div>
+                </div>
+              </p-footer>
+            </p-dialog>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>

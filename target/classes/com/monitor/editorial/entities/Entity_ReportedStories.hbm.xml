@@ -1,0 +1,99 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+
+	<class
+		name="com.monitor.editorial.entities.Entity_ReportedStories"
+		table="reported_stories" schema="public" catalog="postgres">
+		<id column="story_id" name="storyId">
+			<generator class="identity"></generator>
+		</id>
+		<property name="storyTitle">
+			<column name="story_title" />
+		</property>
+		<property name="storyContent">
+			<column name="story_content" />
+		</property>
+		<!-- <property name="fileContent"> <column name="file_content" sql-type="bytea"/> 
+			</property> -->
+		<property name="dateSubmitted">
+			<column name="date_submitted" />
+		</property>
+		<property name="updatedOn">
+			<column name="updated_on" />
+		</property>
+		<property name="updateVersion">
+			<column name="update_version" />
+		</property>
+
+		<property name="storySource">
+			<column name="story_source" />
+		</property>
+		<property name="storyCategoryId">
+			<column name="story_category_id" />
+		</property>
+		<property name="storyCategory">
+			<column name="story_category" />
+		</property>
+
+		<property name="approvalStatus">
+			<column name="approval_status" />
+		</property>
+
+		<property name="editorSeen">
+			<column name="editor_seen" />
+		</property>
+
+		<property name="edited">
+			<column name="edited" />
+		</property>
+
+		<property name="editorialApproval">
+			<column name="editorial_approval" />
+		</property>
+
+		<property name="storySubEditorialApproval">
+			<column name="story_sub_editorial_approval" />
+		</property>
+
+		<property name="lastEditedDate">
+			<column name="last_edited_date" />
+		</property>
+
+		<property name="dateEditorSeen">
+			<column name="date_editor_seen" />
+		</property>
+
+		<property name="dateSubEditorialApproval">
+			<column name="date_sub_editorial_approval" />
+		</property>
+
+		<property name="editorId">
+			<column name="editor_id" />
+		</property>
+		
+		<property name="editedBy">
+			<column name="edited_by" />
+		</property>
+		
+		<property name="seenBy">
+			<column name="seen_by" />
+		</property>
+
+		<property name="dateOfEditorialApprovalStatus">
+			<column name="date_of_editorial_approval_status" />
+		</property>
+
+		<set name="storyReporters" table="user_reported_stories"
+			inverse="true" lazy="false" fetch="select">
+			<key>
+				<column name="story_id" not-null="true" />
+			</key>
+			<one-to-many
+				class="com.monitor.editorial.entities.Entity_UserReportedStories" />
+		</set>
+
+	</class>
+</hibernate-mapping>

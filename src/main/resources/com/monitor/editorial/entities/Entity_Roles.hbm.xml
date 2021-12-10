@@ -1,0 +1,31 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+
+	<class name="com.monitor.editorial.entities.Entity_Roles"
+		table="roles" schema="public" catalog="postgres">
+
+		<id column="role_id" name="roleId">
+			<generator class="identity"></generator>
+		</id>
+		<property name="refNumber">
+			<column name="ref_number" sql-type="varchar" />
+		</property>
+		<property name="roleName">
+			<column name="role_name" sql-type="varchar" />
+		</property>
+		<property name="description">
+			<column name="description" sql-type="varchar" />
+		</property>
+
+		<set name="permissionsList" table="permissions"
+			inverse="true" lazy="true" fetch="select">
+			<key>
+				<column name="role_id" not-null="true" />
+			</key>
+			<one-to-many class="com.monitor.editorial.entities.Entity_Permissions" />
+		</set>
+	</class>
+</hibernate-mapping>

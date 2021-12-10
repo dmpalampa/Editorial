@@ -1,0 +1,31 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+
+    <class name="com.monitor.editorial.entities.Entity_LogginSessions" table="loggin_sessions" schema="public"
+           catalog="postgres">
+            <id column="session_id" name="sessionId">
+            <generator class="identity"></generator>
+        </id>
+        <property name="username">
+            <column name="username" sql-type="varchar" />
+        </property>
+        <property name="tokenNumber">
+            <column name="token_number" sql-type="varchar"/>
+        </property>
+        <property name="status">
+            <column name="status" sql-type="varchar"/>
+        </property>
+        <property name="loginTime" generated="insert">
+            <column name="login_time" sql-type="timestamp" />
+        </property>
+        <property name="logoutTime">
+            <column name="logout_time" sql-type="timestamp"/>
+        </property>
+        <property name="userId">
+            <column name="user_id" sql-type="bigint" />
+        </property>
+    </class>
+</hibernate-mapping>

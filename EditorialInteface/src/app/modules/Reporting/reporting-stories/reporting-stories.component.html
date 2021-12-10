@@ -1,0 +1,117 @@
+<div class="main-content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card">
+
+          <div class="card-header card-header-info">
+            <h4 class="card-title">Report Stories</h4>
+            <p class="card-category"></p>
+          </div>
+
+          <div class="card-body">
+            <form [formGroup]="storyForm" (ngSubmit)="onSubmit()">
+              <div class="row">
+                <!--==============Story title textbox==============-->
+                <div class="col-md-12">
+                  <span class="ui-float-label">
+                    <input id="float-input" type="text" class="form-control" formControlName="storyTitle" size="30"
+                      pInputText>
+                    <label for="float-input">Story Title</label>
+                  </span>
+                  <p-message severity="error" text="Title of the story is required"
+                    *ngIf="!storyForm.get('storyTitle').value && storyForm.get('storyTitle').touched"></p-message>
+                </div>
+              </div>
+
+              <div class="row" style="margin-top:15px;">
+                <!--==============Story category autoComplete==============-->
+                <div class="col-md-4">
+                  <span class="ui-float-label">
+                    <p-autoComplete id="category" [suggestions]="filteredCategories" formControlName="storyCategory"
+                      field="categoryName" (completeMethod)="filterCategories($event)" [minLength]="1"
+                      [dropdown]="true">
+                    </p-autoComplete>
+                    <label for="category">Story Category</label>
+                  </span>
+                  <p-message severity="error" text="Category of the story is required"
+                    *ngIf="!storyForm.get('storyCategory').value && storyForm.get('storyCategory').touched"></p-message>
+                </div>
+
+                <!--=============reporters autoComplete==============-->
+                <div class="col-md-5">
+                  <span class="ui-float-label">
+                    <p-autoComplete formControlName="_reporters" (onUnselect)="unTagStoryOwners($event)"
+                      [suggestions]="filteredReportersList" (completeMethod)="filterReportersMultiple($event)"
+                      (onDropdownClick)="getUsersByRole()" (onFocus)="getUsersByRole()" [size]="30" [minLength]="1"
+                      field="username" [multiple]="true" [dropdown]="true">
+                      <ng-template let-reporter pTemplate="item">
+                        <div class="ui-helper-clearfix reporter-item text-capitalize">
+                          {{reporter.firstName}} {{reporter.lastName}}
+                        </div>
+                      </ng-template>
+                    </p-autoComplete>
+                    <label for="float-input">Other Reporter</label>
+                  </span>
+                </div>
+
+                <!--=============reporters autoComplete==============-->
+                <!-- <div class="col-md-3">
+                  <button type="button" (click)="showDialogAddFiles()" class="btn btn-sm pull-right" pButton
+                    icon="pi pi-paperclip" label="Attact Files"></button>
+                </div> -->
+
+                <div class="col-md-3">
+                  <button mat-raised-button type="submit" mat-raised-button color="accent"
+                    matTooltip="Click Submit Button" class="btn btn-danger pull-right">Submit</button>
+                  <div class="clearfix">
+                  </div>
+                </div>
+              </div>
+
+                <!--============="Upload Files pop up==============-->
+                <p-dialog header="Upload Files" [(visible)]="addFilesdisplay" [style]="{width: '500px'}">
+                  <p-fileUpload name="storyFiles[]" #form fileLimit="3" customUpload="true" multiple="multiple"
+                    (uploadHandler)="onUpload($event, form)" [showCancelButton]="false" maxFileSize="2000000">
+                  </p-fileUpload>
+                </p-dialog>
+
+                <!--============="Text editor==============-->
+                <div class="row" style="margin-top:15px; margin-top:15px;">
+                  <div class="col-md-12">
+                    <ejs-richtexteditor #toolsRTE id='alltoolRTE' height='340px' [(value)]="reportStory"
+                      [toolbarSettings]='tools'>
+                    </ejs-richtexteditor>
+                    <br/>
+                    <button mat-raised-button type="submit" mat-raised-button color="accent"
+                    matTooltip="Click Submit Button" class="btn btn-danger pull-right">Submit</button>
+               
+                  </div>
+                  <!-- <div class="col-md-3">
+                    <p-confirmDialog [style]="{width: '50vw'}"></p-confirmDialog>
+                    <div *ngIf="storyFiles_.length>0">
+                      <p-table [value]="storyFiles_">
+                        <ng-template pTemplate="caption">
+                          List of files
+                        </ng-template>
+                        <ng-template pTemplate="body" let-rowData>
+                          <tr>
+                            <td>{{rowData.fileName}}</td>
+                            <td><i class="pull-right pi pi-eye" (click)="openFile(rowData.fileContent)"></i></td>
+                            <td><i class="pull-right pi pi-trash" (click)="confirmRemoveFile(rowData)"></i></td>
+                          </tr>
+                        </ng-template>
+                      </p-table>
+                    </div>
+
+                  </div> -->
+                </div>
+      
+
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,190 @@
+<div class="main-content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-12">
+
+        <div class="card">
+
+          <div class="card-header card-header-info">
+            <h4 class="card-title">Story Categories</h4>
+            <p class="card-category"></p>
+          </div>
+
+          <div class="card-body">
+
+            <div class="row" *ngIf="totalRecords > 0" style="margin-left:10px; margin-right:10px;">
+              <div class="col-md-12">
+                <p-contextMenu #dt appendTo="body"></p-contextMenu>
+                <p-table [columns]="cols" [value]="existingStoryCategories" selectionMode="single" [paginator]="true"
+                  [rows]="20" (onPage)="paginate($event)" sortMode="multiple" [rowsPerPageOptions]="[5,10,20,50]"
+                  [totalRecords]="totalRecords" #dt [(selection)]="selectedCat" (onRowSelect)="onRowSelect($event)"
+                  [contextMenu]="cm" [(contextMenuSelection)]="selectedCat">
+
+                  <ng-template pTemplate="caption">
+
+                    <div class="row">
+                      <div class="col-md-4">
+                        <button class="btn btn-sm btn-outline-primary" (click)="createNewStoryCategory()">Create New
+                          Category</button>
+                      </div>
+                      <div class="col-md-4">
+                        <button pButton type="button" class="btn btn-sm btn-outline-primary pull-left" label="Refresh"
+                          icon="pi pi-refresh" (click)="refreshPage()"></button>
+                      </div>
+
+                      <div class="col-md-4">
+                        <i class="fa fa-search"></i>
+                        <input type="text" pInputText placeholder="Global Filter"
+                          (input)="dt.filterGlobal($event.target.value, 'contains')" style="width:auto">
+                      </div>
+                    </div>
+                  </ng-template>
+
+                  <ng-template pTemplate="header" let-columns>
+                    <tr>
+                      <th *ngFor="let col of columns" [pSortableColumn]="col.field">
+                        {{col.header}}
+                        <p-sortIcon [field]="col.field"></p-sortIcon>
+                      </th>
+                    </tr>
+                  </ng-template>
+                  <ng-template pTemplate="body" let-rowData let-columns="columns">
+                    <tr [pSelectableRow]="rowData">
+                      <td>
+                        {{rowData.categoryName}}
+                      </td>
+                      <td>
+                        <div *ngIf="rowData.supervisorInCharge">
+                          {{rowData.supervisorInCharge.firstName+' '+rowData.supervisorInCharge.lastName}}
+                        </div>
+                        <div *ngIf="!rowData.supervisorInCharge" style="font-style:italic; color:darkcyan;">
+                          No Supervisor
+                        </div>
+                      </td>
+                      <td>
+                        {{rowData.description}}
+                      </td>
+                    </tr>
+                  </ng-template>
+                </p-table>
+              </div>
+            </div>
+
+
+            <p-dialog header="Add Story Category" [(visible)]="displayStoryCategoryModal" [responsive]="true"
+              showEffect="fade" [modal]="true" [style]="{width: '950px', inWidth: '200px'}" [minY]="70"
+              [maximizable]="true" [baseZIndex]="10000">
+              <div class="row">
+                <div class="col-md-12">
+                  <form [formGroup]="storyCategoryForm" (ngSubmit)="onSubmit()">
+                    <div class="row">
+                      <div class="col-md-12">
+                        <table style="margin-top:30px;">
+                          <tbody *ngFor="let cat of storyCategories; let i= index">
+                            <tr>
+                              <td>
+                                <div style="margin-bottom:30px;">
+                                  <span class="ui-float-label">
+                                    <input value="{{cat.categoryName}}" formControlName="categoryName1"
+                                      class="form-control" type="text" size="30" pInputText>
+                                    <label for="float-input">Category Name</label>
+                                  </span>
+                                </div>
+                              </td>
+                              <td>
+                                <div style="margin-bottom:30px;">
+                                  <span class="ui-float-label">
+                                    <input value="{{cat.description}}" formControlName="description1"
+                                      class="form-control" type="text" size="30" pInputText>
+                                    <label for="float-input">Description</label>
+                                  </span>
+                                </div>
+                              </td>
+                              <td>
+                                <div style="margin-bottom:30px;">
+                      
+                                  <span class="ui-float-label">
+                                    <p-autoComplete formControlName="supervisor1" 
+                                      [suggestions]="filteredSupervisors" (completeMethod)="_filteredSupervisors($event)"
+                                      [size]="30" [minLength]="1"
+                                      field="username" [dropdown]="true">
+                                      <ng-template let-supervisor pTemplate="item">
+                                        <div class="ui-helper-clearfix supervisor-item text-capitalize">
+                                          {{supervisor.firstName}} {{supervisor.lastName}}
+                                        </div>
+                                      </ng-template>
+                                    </p-autoComplete>
+                                    <label for="float-input">Supervisor</label>
+                                  </span>
+                                </div>
+                              </td>
+                              <td>
+                                <i class="pi pi-pencil btn btn-sm btn-outline-primary"
+                                  (click)="UpdateCatgery(i, cat)"></i>
+                              </td>
+                              <td>
+                                <i class="pi pi-trash btn btn-sm btn-outline-primary"
+                                  (click)="RemoveCategory(i,cat.categoryName)"></i>
+                              </td>
+                            </tr>
+                          </tbody>
+                          <tfoot *ngIf="addNewCategory">
+                            <tr>
+                              <td>
+                                <div style="margin-bottom:30px;">
+                                  <span class="ui-float-label">
+                                    <input formControlName="categoryName" class="form-control" type="text" size="30"
+                                      pInputText>
+                                    <label for="float-input">Category Name</label>
+                                  </span>
+                                </div>
+                              </td>
+                              <td>
+                                <div style="margin-bottom:30px;">
+                                  <span class="ui-float-label">
+                                    <input formControlName="description" class="form-control" type="text" size="30"
+                                      pInputText>
+                                    <label for="float-input">description</label>
+                                  </span>
+                                </div>
+                              </td>
+
+                              <td>
+                                <div style="margin-bottom:30px;">
+                                  <span class="ui-float-label">
+                                    <p-autoComplete field="username" [suggestions]="filteredSupervisors"
+                                      formControlName="supervisor" (completeMethod)="_filteredSupervisors($event)"
+                                      [size]="30" [minLength]="1" [dropdown]="true">
+                                    </p-autoComplete>
+                                    <label for="float-input">supervisor</label>
+                                  </span>
+                                </div>
+                              </td>
+                              <td>
+                                <i class="pi pi-plus" (click)="BuildStoryCategoryArray()"></i>
+                              </td>
+                            </tr>
+                          </tfoot>
+                        </table>
+                      </div>
+                    </div>
+                    <p-footer>
+                      <div class="ui-dialog-buttonpane ui-helper-clearfix">
+                        <button type="button" pButton icon="fa fa-close" (click)="delete()" label="cancel"></button>
+                        <button mat-raised-button (click)="onSubmit()" type="submit"
+                          [disabled]="!storyCategoryForm.valid"
+                          class="btn btn-danger pull-right">{{submitButonText}}</button>
+                        <div class="clearfix"></div>
+                      </div>
+                    </p-footer>
+                  </form>
+                </div>
+              </div>
+            </p-dialog>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

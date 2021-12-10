@@ -1,0 +1,109 @@
+<div class="main-content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-header card-header-info">
+            <h4 class="card-title">NMG EDITORIAL APP</h4>
+          </div>
+          <div class="card-body">
+            <div class="container-fluid">
+              <div class="row">
+                <div class="col-md-3"></div>
+                <div class="col-md-6">
+                  <div class="card">
+                    <div class="row">
+                      <div class="col-md-4"></div>
+                      <div class="col-md-4">
+                        <img class="img-thumbnail" src="./assets/img/avata1.jpg" style="height: 100px; width:100%" />
+                      </div>
+                      <div class="col-md-4"></div>
+                    </div>
+                    <div class="card-body" style="text-align: center;">
+                      <h5 class="card-category text-gray text-capitalize">
+                        Name: {{fullName}}
+                      </h5>
+                      <p class="card-description">
+                        Role : {{userRole}}
+                      </p>
+                      <button class="btn btn-info btn-round" (click)="onContinueSelected()">Continue Loading...</button>
+                    </div>
+
+                    <!--=======change password==========-->
+                    <div class="card">
+
+                      <button class="btn btn-primary btn-sm" (click)="promptChangeUserPassword()">Change
+                        Password</button>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-3"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!--=========Reset user password dialog================-->
+    <p-dialog header="Reset user password" [(visible)]="displayChangeUserPass" [responsive]="true" showEffect="fade"
+      [modal]="true" [style]="{width: '750px', minWidth: '200px'}" [minY]="70" [maximizable]="true"
+      [baseZIndex]="10000">
+      <form [formGroup]="changePassWordForm" (ngSubmit)="onSubmitPasswordChange()">
+        <div class="container-fluid">
+
+          <div class="row" style="margin-top:30px;">
+            <div class="col-md-6">
+              <input class="form-control" type="hidden" formControlName="userId" />
+
+              <span class="ui-float-label">
+                <input id="currentPassword" class="form-control" type="password" pPassword
+                  formControlName="currentPassword" />
+                <label for="currentPassword"> current password </label>
+              </span>
+              <p-message severity="error" text="Enter current Password"
+                *ngIf="!changePassWordForm.get('currentPassword').value && changePassWordForm.get('currentPassword').touched">
+              </p-message>
+            </div>
+          </div>
+
+          <div class="row" style="margin-top:30px;">
+            <div class="col-md-6">
+              <span class="ui-float-label">
+                <input id="newPassword" class="form-control" type="password" pPassword formControlName="newPassword" />
+                <label for="newPassword"> New password </label>
+              </span>
+              <p-message severity="error" text="Enter new Password"
+                *ngIf="!changePassWordForm.get('newPassword').value && changePassWordForm.get('newPassword').touched">
+              </p-message>
+            </div>
+          </div>
+
+          <div class="row" style="margin-top:30px;">
+            <div class="col-md-6">
+              <span class="ui-float-label">
+                <input id="confirmPassword" class="form-control" type="password" pPassword pInputText
+                  formControlName="confirmPassword" />
+                <label for="confirmPassword"> Confirm Password </label>
+              </span>
+              <p-message severity="error" text="Enter confirm Password"
+                *ngIf="!changePassWordForm.get('confirmPassword').value && changePassWordForm.get('confirmPassword').touched">
+              </p-message>
+            </div>
+          </div>
+        </div>
+        <p-footer>
+          <div class="ui-dialog-buttonpane ui-helper-clearfix">
+            <button type="button" pButton icon="fa fa-close" (click)="delete()" label="cancel"></button>
+            <button mat-raised-button type="submit" [disabled]="!changePassWordForm.valid"
+              class="btn btn-danger pull-right">Submit</button>
+            <div class="clearfix"></div>
+          </div>
+        </p-footer>
+      </form>
+    </p-dialog>
+
+
+
+  </div>
+</div>

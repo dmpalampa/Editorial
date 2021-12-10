@@ -1,0 +1,77 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+
+	<class name="com.monitor.editorial.entities.Entity_EditedStories"
+		table="edited_stories" schema="public" catalog="postgres">
+
+		<id column="e_story_id" name="eStoryId">
+			<generator class="identity"></generator>
+		</id>
+		<property name="refNumber">
+			<column name="ref_number" />
+		</property>
+		<property name="reportedStoryId">
+			<column name="reported_story_id" />
+		</property>
+		<property name="editedBy">
+			<column name="edited_by" />
+		</property>
+		<property name="dateEdited">
+			<column name="date_edited" />
+		</property>
+		<property name="storyName">
+			<column name="story_name" />
+		</property>
+		<property name="storyContent">
+			<column name="story_content" />
+		</property>
+		<property name="storyCategoryId">
+			<column name="story_category_id" />
+		</property>
+		<property name="storyCategory">
+			<column name="story_category" />
+		</property>
+
+		<property name="chiefEditorSeen">
+			<column name="chief_editor_seen" />
+		</property>
+		<property name="subEdited">
+			<column name="sub_edited" />
+		</property>
+
+		<property name="subEditorSeen">
+			<column name="sub_editor_seen" />
+		</property>
+		<property name="pageNumberId">
+			<column name="page_number_id" />
+		</property>
+
+		<property name="storySubEditorialApproval">
+			<column name="story_sub_editorial_approval" />
+		</property>
+
+		<property name="subEditorApproval">
+			<column name="sub_editor_approval" />
+		</property>
+		
+		<property name="subEditorUserId">
+			<column name="sub_editor_user_id" />
+		</property>
+
+		<property name="chiefSubToSubAssignmentDate">
+			<column name="cheif_sub_to_sub_assignment_date" />
+		</property>
+		
+			<property name="dateChiefOfSubApprovalStatus">
+			<column name="date_of_chief_sub_approval_status" />
+		</property>
+
+		<property name="dateOfSubApprovalStatus">
+			<column name="date_of_sub_approval_status" />
+		</property>
+
+	</class>
+</hibernate-mapping>

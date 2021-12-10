@@ -1,0 +1,353 @@
+<div class="main-content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-12">
+
+        <div class="card">
+
+          <div class="card-header card-header-info">
+            <h4 class="card-title">Edited Stories</h4>
+            <p class="card-category"></p>
+          </div>
+
+          <div class="card-body">
+            <div class="row">
+              <div class="col-md-4">
+                <!--==========range date printer=========-->
+                Select Date: <p-calendar [(ngModel)]="_dateSelected" [style]="{'height':'20px'}"
+                  [inputStyle]="{'height':'20px'}" [inline]="false" dateFormat="dd-mm-yy" id="dateOfBirth"
+                  (onSelect)="onNewDateSelected($event)" [monthNavigator]="true" [yearNavigator]="true"
+                  yearRange="2000:2030" selectionMode="range" [readonlyInput]="true"></p-calendar>
+
+                <p-contextMenu #cm [model]="menuItem" appendTo="body"></p-contextMenu>
+
+                <!--==========left table display stories=========-->
+                <div *ngIf="stories.length>0">
+                  <p-table #dt [columns]="cols" [value]="stories" selectionMode="single" [(selection)]="selectedStory"
+                    [(contextMenuSelection)]="selectedStory" [contextMenu]="cm"
+                    (onRowSelect)="onEditedRowSelected($event)" [paginator]="true" [rows]="15" [scrollable]="true"
+                    [globalFilterFields]="['storyCategory','storyTitle', 'reporterStringList']" scrollHeight="400px">
+                    <ng-template pTemplate="caption">
+                      Edited stories
+                      <div>
+                        <input type="text" pInputText placeholder="Search story"
+                          (input)="dt.filterGlobal($event.target.value, 'contains')" style="width:100%; 
+                          height:20px;" />
+                        <span style="margin-left:-20px;">
+                          <i class="fa fa-search" style="width: auto;"></i>
+                        </span>
+                      </div>
+                    </ng-template>
+
+                    <ng-template pTemplate="body" let-rowData let-columns="columns">
+                      <tr [pSelectableRow]="rowData" [pContextMenuRow]="rowData" (mouseleave)="hideRowData(rowData)">
+                        <td style="font-family: Georgia, 'Times New Roman', Times, serif; font-size: 11px;">
+                          <div *ngIf="rowData.storyTitle">
+                            <div *ngIf="rowData.storyTitle.length>=34" class="text-uppercase">
+                              {{rowData.storyTitle | slice:0:34}}...
+                            </div>
+                            <div *ngIf="rowData.storyTitle.length<34" class="text-uppercase">
+                              {{rowData.storyTitle}}
+                            </div>
+
+                            <div class="row">
+                              <div class="col-md-12">
+                                <table>
+                                  <tr>
+                                    <td>
+                                      <div class="badges" *ngIf="rowData.storyCategory">
+                                        <span class="badge badge-success">{{rowData.storyCategory}}</span>
+                                      </div>
+                                    </td>
+                                    <td>
+                                      <small
+                                        *ngIf="rowData.dateSubmitted">{{rowData.dateSubmitted | date: 'medium'}}</small>
+                                    </td>
+                                  </tr>
+
+                                  <tr>
+                                    <!--========story editor in a table================-->
+                                    <td>
+                                      <small class="pull-right" *ngIf="rowData.editor" class="text-capitalize">
+                                        Edited By: {{rowData.editor.firstName}} {{rowData.editor.lastName}},
+                                      </small>
+                                    </td>
+                                    <td>
+                                      <small *ngIf="rowData.lastEditedDate">
+                                        {{rowData.lastEditedDate | date: 'medium'}}</small>
+                                      <small *ngIf="!rowData.lastEditedDate"> NA</small>
+                                    </td>
+                                  </tr>
+
+                                  <tr>
+                                    <td colspan="2">
+                                      <!--========story reporters in a table================-->
+                                      <div>
+                                        <small class="pull-right" *ngFor="let reporter of rowData.storyReporters"
+                                          class="text-capitalize">
+                                          {{reporter.user.firstName}} {{reporter.user.lastName+', '}}
+                                        </small>
+                                      </div>
+                                    </td>
+                                  </tr>
+                                </table>
+                              </div>
+                            </div>
+
+                            <div *ngIf="!rowData.storyTitle" style="color: red;">
+                              Story has no title!!
+                            </div>
+                            <div>
+                              <table>
+                                <tr>
+                                  <!--====if story approve is pending============-->
+                                  <td *ngIf="rowData.storySubEditorialApproval==0">
+                                    <div style="color:yellow;font-weight: bold;background: black;">
+                                      <small>Pending...</small> </div>
+                                  </td>
+
+                                  <!--====if chief-sub rejected story============-->
+                                  <td *ngIf="rowData.storySubEditorialApproval==-1">
+                                    <div style="color:red;font-weight: bold;background: black;">
+                                      <small>Story Rejected:
+                                        {{rowData.listEditVersion[0].dateChiefOfSubApprovalStatus | date: 'medium'}}
+                                      </small>
+                                    </div>
+                                  </td>
+
+                                  <td *ngIf="rowData.storySubEditorialApproval==-1" style="width:10%"
+                                    (click)="showStoryCommentOnMouseEnter($event, rowData, op2)">
+                                    <i class="pi pi-comment pull-right" style="font-size: 2em"></i>
+                                  </td>
+
+                                  <!--==== date  on which editor approved story============-->
+                                  <td *ngIf="rowData.dateOfEditorialApprovalStatus">
+                                    <div style="color:green; font-weight: bold; background:silver;"><small> Revived
+                                        {{rowData.dateOfEditorialApprovalStatus | date: 'medium'}}
+                                      </small> </div>
+                                  </td>
+
+                                  <!--====if chief-sub approved story============-->
+                                  <td *ngIf="rowData.storySubEditorialApproval==1">
+                                    <div style="color:green; font-weight: bold; background:silver;"><small>Sub
+                                        Approved:
+                                        {{rowData.listEditVersion[0].dateChiefOfSubApprovalStatus | date: 'medium'}}
+                                      </small> </div>
+                                  </td>
+                                </tr>
+                              </table>
+                            </div>
+                          </div>
+                        </td>
+                      </tr>
+                    </ng-template>
+                  </p-table>
+                </div>
+                <div *ngIf="stories.length==0" style="color: red; font-size: 12px;font-style: italic;">
+                  You didn't edit any stories on {{dateSelected | date}}
+                </div>
+              </div>
+
+              <!--====display selected story details=========-->
+
+              <div class="col-md-8" id="story" *ngIf="storySelected">
+                <div class="card">
+                  <div class="card-body">
+                    <div class="row">
+                      <div class="col-md-12" style="color: royalblue;">
+                        {{storyReporters}}
+                      </div>
+                    </div>
+
+                    <!--==========Versions=========-->
+                    <div class="row">
+                      <!--======Edited Versions============-->
+                      <div class="col-md-6">
+                        <div *ngIf="editedVersionsList.length>0">
+
+                          <u>Your Edited Version ({{editedStoryNumberofWords}} words)</u>
+                          <br />
+
+                          <p-table [columns]="cols" [value]="editedVersionsList" [paginator]="true" [rows]="1"
+                            (onPage)="paginate($event)" [scrollable]="true" scrollHeight="300px">
+                            <ng-template pTemplate="body" let-rowData>
+                              <tr>
+                                <td>
+                                  <div style="font-weight: bold;" class="text-uppercase">{{estoryTitle }}</div>
+                                  <div (click)="onStoryClicked(storySubEditorialApproval)" innerHtml={{content}} style="text-align: justify;
+                                             font-size: 14px;font-family: Georgia, 'Times New Roman',
+                                            Times, serif;"></div>
+                                </td>
+                              </tr>
+                            </ng-template>
+                          </p-table>
+                        </div>
+                        <div *ngIf="editedVersionsList.length==0" style="color:red;font-style:italic">No Story
+                          Edited
+                          versions where found</div>
+                      </div>
+
+                      <!--=========Original Versions============-->
+                      <div (click)="onStoryClicked(storySubEditorialApproval)" class="col-md-6">
+
+                        Original Version ({{originalStoryNumberofWords}} words)
+                        <br />
+                        <p-table [rows]="1" [value]="originalStory" [scrollable]="true" scrollHeight="350px">
+                          <ng-template pTemplate="body" let-rowData>
+                            <tr>
+                              <td>
+                                <div style="font-weight: bold;" class="text-uppercase"> {{storyTitle}}</div>
+                                <div (click)="onStoryClicked()" style="border-radius: 15px 50px 30px;text-align: justify;
+                                            background: rgb(245, 247, 243); font-size: 14px;font-family: Georgia, 'Times New Roman',
+                                            Times, serif;" innerHtml={{content}}></div>
+                              </td>
+                            </tr>
+                          </ng-template>
+                        </p-table>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="card-footer">
+                    <div class="col-md-6">
+                      <div *ngIf="storySelected.storyFiles">
+                        <i (mouseenter)="selectStory($event,storySelected,op3)" style="font-size:16px"
+                          class="pi pi-paperclip">{{storySelected.storyFiles.length}} file(s)
+                        </i>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <p-splitButton label="Actions" icon="pi pi-file" class="pull-right" [model]="menuItem">
+                      </p-splitButton>
+                    </div>
+                  </div>
+                </div>
+
+                <p-confirmDialog [style]="{width: '50vw'}"></p-confirmDialog>
+
+
+                <!--=================edit story content=================-->
+                <p-dialog header="Edit Story Content" [(visible)]="editStoryContentDisplay"
+                  *ngIf="storySubEditorialApproval!=1" [responsive]="true" showEffect="fade" [modal]="true"
+                  [style]="{width: '1250px', minWidth: '200px'}" [minY]="70" [maximizable]="true" [baseZIndex]="10000">
+                  <div class="container-fluid">
+                    <div class="row" style="margin-top:30px;" *ngIf="storySubEditorialApproval!=1">
+                      <div class="col-md-12">
+                        <span class="ui-float-label">
+                          <input id="float-input" type="text" [(ngModel)]="estoryTitle" class="form-control" size="30"
+                            pInputText>
+                          <label for="float-input">Story Title</label>
+                        </span>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-md-12" *ngIf="storySubEditorialApproval!=1" style="margin-top:30px;">
+                        <ejs-richtexteditor #toolsRTE id='alltoolRTE' [(value)]="estoryContent"
+                          [toolbarSettings]='tools'>
+                        </ejs-richtexteditor>
+                      </div>
+                    </div>
+                  </div>
+                  <p-footer>
+                    <button type="button" pButton icon="pi pi-check" (click)="confirmEditStory()"
+                      label="Save Changes"></button>
+                    <button type="button" pButton icon="pi pi-close" (click)="editStoryContentDisplay=false"
+                      label="Cancel" class="ui-button-secondary"></button>
+                  </p-footer>
+                </p-dialog>
+
+                <!--=================view approved story content=================-->
+                <p-dialog header="Story was approved by cheif sub-editor" [(visible)]="editStoryContentDisplay"
+                  *ngIf="storySubEditorialApproval==1" [responsive]="true" showEffect="fade" [modal]="true"
+                  [style]="{width: '1000px', minWidth: '200px'}" [minY]="70" [maximizable]="true" [baseZIndex]="10000">
+                  <div class="container-fluid">
+                    <div class="row" style="margin-top:15px;">
+                      <div class=" col-md-12">
+                        <h5 style="color: royalblue;" class="text-uppercase">{{estoryTitle}}</h5>
+                      </div>
+                    </div>
+                    <div class="col-md-12" style="margin-top:30px;">
+                      <p-scrollPanel [style]="{width: '100%', height: '300px'}">
+                        <div style="text-align: justify; background: rgb(245, 247, 243); font-size: 14px;font-family: Georgia, 'Times New Roman',
+                                            Times, serif;" innerHtml={{estoryContent}}></div>
+                      </p-scrollPanel>
+                    </div>
+                  </div>
+                </p-dialog>
+
+                <!--==story files overlay p-overlayPanel==-->
+                <p-overlayPanel #op3 [dismissable]="false" [showCloseIcon]="true" appendTo="body">
+                  <p-table [value]="storySelected.storyFiles" *ngIf="selectedStory" [style]="{width: '350px'}"
+                    [paginator]="true" [rows]="5">
+                    <ng-template pTemplate="caption">
+                      List of files
+                    </ng-template>
+                    <ng-template pTemplate="body" let-rowData>
+                      <tr>
+                        <td style="font-size: 11.5px;">
+                          {{rowData.fileName}}
+                        </td>
+                        <td>
+                          <i class="pull-right pi pi-eye" (click)="openFile(rowData.fileContent)">View</i>
+                        </td>
+                        <td>
+                          <i class="pull-right pi pi-trash" (click)="confirmRemoveFile(rowData)">Delete</i>
+                        </td>
+                      </tr>
+                    </ng-template>
+                    <ng-template pTemplate="summary">
+                    </ng-template>
+                  </p-table>
+                </p-overlayPanel>
+
+              </div>
+
+              <!--==============comment overlaypane================== -->
+              <p-overlayPanel #op2 appendTo="body" [showCloseIcon]="true" [dismissable]="false">
+                <div class="col-md-12" *ngIf="comments.length>0">
+                  <h6>Reason(s) for rejection</h6>
+                  <p-scrollPanel [style]="{width: '100%', height: '300px'}">
+                    <ul>
+                      <li *ngFor="let comment of comments" class="media">
+                        <div class="container-fluid">
+                          <div class="row" style="margin-top: 5px">
+                            <div class="col-md-6">
+                              <div *ngIf="comment.storyOwer==false">
+                                <p-card subheader="{{comment.username}}" [style]="{'width': '360px'}">
+                                  <div
+                                    style="margin-top: 5px; margin-top: 5px;font-size: 10; font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;">
+                                    <p>{{comment.comment }}</p>
+                                  </div>
+                                  <div><small>{{comment.date | date:"medium" }}</small></div>
+                                </p-card>
+                              </div>
+                            </div>
+
+                            <div class="col-md-6">
+                              <div *ngIf="comment.storyOwer==true">
+                                <p-card subheader="{{comment.username}}"
+                                  [style]="{'width': '360px', 'background-color': 'rgb(214, 212, 212)'}">
+                                  <div
+                                    style="font-size: 10; font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;">
+                                    <p>{{comment.comment }}</p>
+                                  </div>
+                                  <div><small>{{comment.date | date:"medium" }}</small></div>
+                                </p-card>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </li>
+                    </ul>
+                  </p-scrollPanel>
+                </div>
+                <div class="col-md-12" *ngIf="comments.length<=0">
+                  no comments found.
+                </div>
+              </p-overlayPanel>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>

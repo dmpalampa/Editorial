@@ -1,0 +1,14 @@
+
+.storyStatusTrue{
+    color: rgb(18, 221, 120);
+}
+
+
+.storyStatusFalse{
+    color:red;
+}
+
+.storySubEditorialApprovalFalse{
+    background-color: rgb(76, 179, 144) !important;
+    color: #ffffff !important;
+}

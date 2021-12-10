@@ -1,0 +1,314 @@
+<div class="main-content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-12">
+
+        <div class="card">
+
+          <div class="card-header card-header-info">
+            <h4 class="card-title">Reported Stories</h4>
+            <p class="card-category"></p>
+          </div>
+
+          <div class="card-body">
+
+            <div class="row">
+              <div class="col-md-4">
+                <!--left table for new stories list-->
+                select date:
+                <p-calendar [(ngModel)]="_dateSelected" [style]="{'height':'20px'}" [inputStyle]="{'height':'20px'}"
+                  [inline]="false" dateFormat="dd-mm-yy" id="dateOfBirth" (onSelect)="onNewDateSelected($event)"
+                  [monthNavigator]="true" [yearNavigator]="true" yearRange="2000:2030" selectionMode="range"
+                  [readonlyInput]="true"></p-calendar>
+
+                <p-contextMenu #cm [model]="menuItem" [style]="{'font-size':'11px'}" appendTo="body"></p-contextMenu>
+
+                <!--left table for rejected stories-->
+                <div *ngIf="stories.length>0">
+                  <p-table #dt [columns]="cols" [value]="stories" selectionMode="single" [(selection)]="selectedStory"
+                    [(contextMenuSelection)]="selectedStory" [contextMenu]="cm" (onRowSelect)="onRowSelect($event)"
+                    [globalFilterFields]="['storyCategory','storyTitle']" [paginator]="true" [rows]="15"
+                    [scrollable]="true" scrollHeight="350px">
+                    <ng-template pTemplate="caption">
+                      <div>
+                        <input type="text" pInputText placeholder="Search story"
+                          (input)="dt.filterGlobal($event.target.value, 'contains')" style="width:100%; float:right;
+                          height:20px;" />
+                        <span style="margin-left:-20px;">
+                        </span>
+                      </div>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-rowData let-columns="columns">
+                      <tr [pSelectableRow]="rowData" [pContextMenuRow]="rowData">
+                        <td style="font-family: Georgia, 'Times New Roman', Times, serif; font-size: 11px;">
+                          <!--========story titles================-->
+                          <div *ngIf="rowData.storyTitle.length>=34" class="text-uppercase"
+                            style="font-family: Georgia, 'Times New Roman', Times, serif;">
+                            {{rowData.storyTitle | slice:0:34}}...
+                            <i *ngIf="!rowData.editorSeen" class="pi pi-circle-on"
+                              style="font-size: 2em"></i>
+                          </div>
+                          <!--========story titles================-->
+                          <div *ngIf="rowData.storyTitle.length<34" class="text-uppercase"
+                            style="font-family: Georgia, 'Times New Roman', Times, serif;">
+                            <h6> {{rowData.storyTitle}}</h6>
+                          </div>
+
+                          <div>
+                            <table>
+                              <tr>
+                                <td>
+                                  <div class="badges" *ngIf="rowData.storyCategory">
+                                    <span class="badge badge-success">{{rowData.storyCategory}}</span>
+                                  </div>
+                                </td>
+                                <td>
+                                  <small
+                                    *ngIf="rowData.dateSubmitted">{{rowData.dateSubmitted | date: 'medium'}}</small>
+                                </td>
+                              </tr>
+
+                              <!--==============story approved by editor status DATE==============-->
+                              <tr>
+                                <td colspan="2">
+                                  <!--========story reporters in a table================-->
+                                  <div>By: 
+                                    <small class="pull-right" *ngFor="let reporter of rowData.storyReporters"
+                                      class="text-capitalize">
+                                      {{reporter.user.firstName}} {{reporter.user.lastName+', '}}
+                                    </small>
+                                  </div>
+                                </td>
+                              </tr>
+                            </table>
+                          </div>
+
+                        </td>
+                      </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-rowData let-columns="columns" *ngIf="stories.length<0">
+                      <tr>
+                        <td>
+                          <p style="font-family: 'Times New Roman', Times, serif;font-size: 10;color:red;">It's like you
+                            No Stories for date: {{noStoriesDate}}</p>
+                        </td>
+                      </tr>
+                    </ng-template>
+                  </p-table>
+                </div>
+                <div *ngIf="stories.length==0" style="color: red; font-size: 12px;font-style: italic;">
+                  No stories where submitted on {{dateSelected | date}} available for editing.
+                </div>
+              </div>
+
+              <!--=========display story details section============-->
+              <div class="col-md-8" id="story" *ngIf="selectedStory">
+                <div class="container-fluid">
+
+                  <div class="card">
+                    <div class="card-header card-header-danger">
+                      <h5 class="card-title">{{storyTitle}}</h5>
+                      <p class="card-category"></p>
+                    </div>
+
+                    <div class="card-body">
+                      <div class="row" style="color: royalblue;">
+                        <div class="col-md-12">
+                          {{storyReporters}}
+                        </div>
+                      </div>
+
+                      <div class="row">
+                        <div class="col-md-12">
+                          <p-scrollPanel [style]="{width: '100%', height: '300px'}">
+                            <div style="background: rgb(245, 247, 243); text-align: justify;font-size: 14px;font-family: Georgia, 'Times New Roman',
+                                  Times, serif;" (click)="onStoryContentClicked()">
+                              {{content}}
+                            </div>
+                          </p-scrollPanel>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="card-footer">
+                      <div class="col-md-3">
+                        <i (mouseenter)="selectStory($event,selectedStory,op3)" style="font-size:16px"
+                          class="pi pi-paperclip">{{storyFiles.length}} file(s)
+                        </i>
+                      </div>
+                      <div class="col-md-3">
+                        {{StoryNumberofWords}} words
+                      </div>
+                      <div class="col-md-3">
+                        <!-- <button class="btn btn-sm btn-success" (click)="onSubmitStoryApprovalStatusChange()">Approve
+                          Story
+                        </button> -->
+                      </div>
+                      <div class="col-md-3">
+                        <button class="btn btn-sm btn-danger" (click)="confirmRejectStory()">Reject Story</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!--==============Edit story pop up modal====================-->
+          <p-dialog header="Edit Story Content" [(visible)]="editStoryContentDisplay" [responsive]="true"
+            showEffect="fade" [modal]="true" [style]="{width: '1250px', minWidth: '200px'}" [minY]="70"
+            [maximizable]="true" [baseZIndex]="10000">
+            <div class="container-fluid">
+              <div class="row" style="margin-top:30px;">
+                <div class="col-md-12">
+                  <span class="ui-float-label">
+                    <input id="float-input" type="text" [(ngModel)]="storyTitle" class="form-control" size="30"
+                      pInputText>
+                    <label for="float-input">Story Title</label>
+                  </span>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-12" style="margin-top:30px;">
+                  <ejs-richtexteditor #toolsRTE id='alltoolRTE' [(value)]="storyContent" [toolbarSettings]='tools'>
+                  </ejs-richtexteditor>
+                </div>
+              </div>
+            </div>
+            <p-footer>
+              <button type="button" pButton icon="pi pi-check" (click)="confirmEditStory()"
+                label="Save Changes"></button>
+              <button type="button" pButton icon="pi pi-close" (click)="editStoryContentDisplay=false" label="Cancel"
+                class="ui-button-secondary"></button>
+            </p-footer>
+          </p-dialog>
+
+          <p-confirmDialog [style]="{width: '50vw'}"></p-confirmDialog>
+
+          <!--==========Approve stories pop up=================-->
+          <p-dialog header="" [(visible)]="storyApprovalStatusDisplay" [responsive]="true" showEffect="fade"
+            [modal]="true" [style]="{width: '750px', minWidth: '200px'}" [minY]="70" [maximizable]="true"
+            [baseZIndex]="10000">
+            <div class="container-fluid">
+              <div class="row">
+                <div class="col-md-3">
+                  {{userFullname}}
+                </div>
+                <div class="col-md-6">
+                  <p-inputSwitch [(ngModle)]="status"></p-inputSwitch>
+                </div>
+                <div class="col-md-3">
+                </div>
+              </div>
+            </div>
+            <p-footer>
+              <div class="ui-dialog-buttonpane ui-helper-clearfix">
+                <button mat-raised-button (click)="onSubmitStoryApprovalStatusChange()" type="submit"
+                  class="btn btn-danger pull-right">Submit</button>
+                <div class="clearfix"></div>
+              </div>
+            </p-footer>
+          </p-dialog>
+
+
+          <!--==========Story Files overlay pane=================-->
+          <p-overlayPanel #op3 [dismissable]="false" [showCloseIcon]="true" appendTo="body">
+            <p-table [value]="selectedStory.storyFiles" *ngIf="selectedStory" [style]="{width: '350px'}"
+              [paginator]="true" [rows]="5">
+              <ng-template pTemplate="caption">
+                List of files
+              </ng-template>
+              <ng-template pTemplate="body" let-rowData>
+                <tr>
+                  <td style="font-size: 11.5px;">
+                    {{rowData.fileName}}
+                  </td>
+                  <td>
+                    <i class="pull-right pi pi-eye" (click)="openFile(rowData.fileContent)"></i>
+                  </td>
+                  <td>
+                    <i class="pull-right pi pi-trash" (click)="confirmRemoveFile(rowData)"></i>
+                  </td>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="summary">
+              </ng-template>
+            </p-table>
+          </p-overlayPanel>
+
+          <!--########################################EDIT-->
+
+          <!--story comments dialog-->
+
+          <p-dialog header="{{storyTitle}}" [(visible)]="storyCommentDisplay" [responsive]="true" showEffect="fade"
+            [modal]="true" [style]="{width: '750px', minWidth: '200px', minHeight: '200px'}" [minY]="70"
+            [maximizable]="true" [baseZIndex]="10000">
+            <div class="container-fluid">
+              <div class="row">
+                <div class="col-md-12">
+                  <h4 style="color: red;">Comments</h4>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-md-12">
+                  <p-scrollPanel [style]="{width: '100%', height: '450px'}">
+                    <ul>
+                      <li *ngFor="let comment of comments" class="media">
+                        <div class="container-fluid">
+                          <div class="row" style="margin-top: 5px">
+                            <div class="col-md-6">
+                              <div *ngIf="comment.storyOwer==false">
+                                <p-card subheader="{{comment.username}}" [style]="{'width': '360px'}">
+                                  <div
+                                    style="margin-top: 5px; margin-top: 5px;font-size: 10; font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;">
+                                    <p>{{comment.comment }}</p>
+                                  </div>
+                                  <div><small>{{comment.date | date:"medium" }}</small></div>
+                                </p-card>
+                              </div>
+                            </div>
+
+                            <div class="col-md-6">
+                              <div *ngIf="comment.storyOwer==true">
+                                <p-card subheader="{{comment.username}}"
+                                  [style]="{'width': '360px', 'background-color': 'rgb(214, 212, 212)'}">
+                                  <div
+                                    style="font-size: 10; font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;">
+                                    <p>{{comment.comment }}</p>
+                                  </div>
+                                  <div><small>{{comment.date | date:"medium" }}</small></div>
+                                </p-card>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </li>
+                    </ul>
+                  </p-scrollPanel>
+                </div>
+              </div>
+            </div>
+            <p-footer>
+              <form [formGroup]="commentForm" (ngSubmit)="onSubmitComment()">
+                <div class="row">
+                  <div class="col-md-8">
+                    <textarea [rows]="3" class="form-control" pInputTextarea formControlName="comment"
+                      autoResize="autoResize"></textarea>
+                  </div>
+
+                  <div class="col-md-4">
+                    <button mat-raised-button type="submit" [disabled]="!commentForm.valid"
+                      class="btn btn-danger pull-right">Submit</button>
+                    <div class="clearfix"></div>
+                  </div>
+                </div>
+              </form>
+            </p-footer>
+          </p-dialog>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

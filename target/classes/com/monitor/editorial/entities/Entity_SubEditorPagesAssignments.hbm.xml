@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+
+	<class
+		name="com.monitor.editorial.entities.Entity_SubEditorPagesAssignments"
+		table="sub_editor_page_assignments" schema="public" catalog="postgres">
+
+		<id column="id" name="id">
+			<generator class="identity"></generator>
+		</id>
+		<property name="subEditorUserId">
+			<column name="sub_editor_user_id" />
+		</property>
+		<property name="chiefSubEditorUserId">
+			<column name="chief_sub_editor_user_id" />
+		</property>
+		
+		<property name="dateAssigned">
+			<column name="date_assigned" />
+		</property>
+		
+		<property name="pageNumberId">
+			<column name="page_number_id" />
+		</property>
+
+	</class>
+</hibernate-mapping>

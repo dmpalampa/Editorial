@@ -1,0 +1,15 @@
+<div>
+  <span *ngIf="showLoader" class="loading">Loading, please wait</span>
+  <div *ngIf="!user.loggedIn" class="login-container-div">
+    <app-login></app-login>
+  </div>
+
+
+
+  <div *ngIf="user.loggedIn">
+    <router-outlet></router-outlet>
+<!--    <main id="page-content-wrapper" role="main">-->
+<!--      <router-outlet></router-outlet>-->
+<!--    </main>-->
+  </div>
+</div>
